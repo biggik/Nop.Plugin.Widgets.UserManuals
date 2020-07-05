@@ -157,6 +157,10 @@
     <None Include="..\..\Common\Views\_ViewImports.cshtml" Link="Views\_ViewImports.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+
+  <None Include="..\..\Common\Views\Shared\Components\WidgetUserManuals\Default.cshtml" Link="Views\Shared\Components\WidgetUserManuals\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

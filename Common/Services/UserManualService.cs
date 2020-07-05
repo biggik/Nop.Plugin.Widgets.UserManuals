@@ -169,9 +169,11 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             return _cacheManager.Get(key, () =>
             {
                 return from userManualProduct in _userManualProductRepository.Table
-                       join p_userManual in _userManualRepository.Table on userManualProduct.UserManualId equals p_userManual.Id into pj_userManual
+                            where userManualProduct.ProductId == productId
+                       join p_userManual in _userManualRepository.Table on 
+                            userManualProduct.UserManualId equals p_userManual.Id into pj_userManual
                        from userManual in pj_userManual.DefaultIfEmpty()
-                       where userManual.Published
+                            where userManual.Published
                        select userManual
                        ;
             });

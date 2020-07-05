@@ -132,7 +132,7 @@ namespace Nop.Plugin.Widgets.UserManuals
             base.Uninstall();
         }
 
-        public string GetWidgetViewComponentName(string widgetZone) => "WidgetsEmployees";
+        public string GetWidgetViewComponentName(string widgetZone) => "WidgetsUserManuals";
 
         public void ManageSiteMap(SiteMapNode rootNode)
         {

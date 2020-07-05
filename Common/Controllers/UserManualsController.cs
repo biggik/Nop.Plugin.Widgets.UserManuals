@@ -94,25 +94,33 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                     lastCategoryName = categoryName;
                 }
 
-                var umm = um.ToModel();
-
-                foreach (var umProd in _userManualService.GetProductsForManual(umm.Id))
-                { 
-                    var slug = _urlRecordService.GetActiveSlug(umProd.userManualProduct.ProductId, nameof(Product), 0); // TODO: use languageId ?
-                    var product = _productService.GetProductById(umProd.userManualProduct.ProductId);
-                    umm.ProductSlugs.Add((product.ShortDescription, slug));
-                }
-
-                if (umm.ProductSlugs.Any())
+                var manualProducts = _userManualService.GetProductsForManual(um.Id);
+                if (manualProducts.Any())
                 {
-                    categoryModel.UserManualsForActiveProducts.Add(umm);
+                    // We repeat the manual for each product
+                    foreach (var umProd in manualProducts)
+                    {
+                        var umm = um.ToModel();
+                        umm.ProductSlug = _urlRecordService.GetActiveSlug(umProd.userManualProduct.ProductId, nameof(Product), 0); // TODO: use languageId ?
+
+                        if (string.IsNullOrEmpty(umm.ProductSlug))
+                        {
+                            categoryModel.UserManualsForDiscontinuedProducts.Add(umm);
+                        }
+                        else
+                        {
+                            umm.ProductDescription = umProd.product.Name;
+                            categoryModel.UserManualsForActiveProducts.Add(umm);
+                        }
+                    }
                 }
                 else
                 {
-                    categoryModel.UserManualsForDiscontinuedProducts.Add(umm);
+                    // No products = discontinued product
+                    categoryModel.UserManualsForDiscontinuedProducts.Add(um.ToModel());
                 }
             }
-            
+
             if (_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
             {
                 DisplayEditLink(Url.Action(nameof(List), ControllerName, new { area = "Admin" }));

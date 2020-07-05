@@ -42,7 +42,11 @@ namespace Nop.Plugin.Widgets.UserManuals.Models
         public bool CategoryPublished { get; set; }
         public string CategoryName { get; set; }
 
-        public IList<(string productDescription, string productSlug)> ProductSlugs { get; set; } = new List<(string, string)>();
+        public string ProductDescription { get; set; }
+        public string ProductSlug { get; set; }
+
+        public string SortDescription => ProductDescription ?? Description;
+        public bool IsDiscontinuedProduct => string.IsNullOrEmpty(ProductDescription);
 
         public IList<SelectListItem> AvailableCategories { get; set; } = new List<SelectListItem>();
         public IList<SelectListItem> AvailableManufacturers { get; set; } = new List<SelectListItem>();

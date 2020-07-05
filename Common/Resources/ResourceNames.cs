@@ -51,8 +51,8 @@ namespace Nop.Plugin.Widgets.UserManuals.Resources
         [LocaleString(Cultures.IS, "Leiðarvísar")]
         public const string ListCaption = "Status.UserManualWidget.UserManual.Caption.UserManuals";
 
-        [LocaleString(Cultures.EN, "Goto product")]
-        [LocaleString(Cultures.IS, "Fara í vöru")]
+        [LocaleString(Cultures.EN, "View product")]
+        [LocaleString(Cultures.IS, "Skoða vöru")]
         public const string ProductLink = "Status.UserManualWidget.UserManual.ProductLink";
 
         [LocaleString(Cultures.EN, "Download the user manual document")]
@@ -74,6 +74,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Resources
         [LocaleString(Cultures.EN, "Back to User Manual list")]
         [LocaleString(Cultures.IS, "Tilbaka í leiðarvísalista")]
         public const string BackToList = "Status.UserManualWidget.Action.UserManual.BackToList";
+
+        [LocaleString(Cultures.EN, "View")]
+        [LocaleString(Cultures.IS, "Skoða")]
+        public const string View = "Status.UserManualWidget.Action.UserManual.View";
+
+        [LocaleString(Cultures.EN, "Download")]
+        [LocaleString(Cultures.IS, "Sækja")]
+        public const string Download = "Status.UserManualWidget.Action.UserManual.Download";
     }
 
     [LocaleStringProvider]

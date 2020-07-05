@@ -11,7 +11,11 @@ namespace Nop.Plugin.Widgets.UserManuals.Models
         }
 
         public CategoryModel Category { get; }
-        public IEnumerable<UserManualModel> UserManuals => Enumerable.Concat(UserManualsForActiveProducts, UserManualsForDiscontinuedProducts);
+        public IEnumerable<UserManualModel> UserManuals => 
+            Enumerable.Concat(
+                UserManualsForActiveProducts.OrderBy(x => x.DisplayOrder).ThenBy(x => x.SortDescription), 
+                UserManualsForDiscontinuedProducts.OrderBy(x => x.DisplayOrder).ThenBy(x => x.SortDescription)
+            );
      
         public List<UserManualModel> UserManualsForActiveProducts { get; } = new List<UserManualModel>();
         public List<UserManualModel> UserManualsForDiscontinuedProducts { get; } = new List<UserManualModel>();

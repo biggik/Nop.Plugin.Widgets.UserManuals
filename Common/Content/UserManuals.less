@@ -1,0 +1,87 @@
+﻿#UserManuals {
+    background: #eee !important;
+}
+
+.section {
+    margin-bottom: 20px;
+
+    .title {
+        text-align: center;
+        text-transform: uppercase;
+        font-size: xx-large;
+    }
+
+    .options {
+        text-align: right;
+    }
+}
+
+.manufacturer {
+    font-size: xx-large;
+    padding: 0.3em;
+    background-color:lighten(lightgrey,12%);
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.category {
+    font-size: large;
+    padding-left: 0.3em;
+    padding-bottom: 0.5em;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(20em,1fr));
+    grid-gap: 10px;
+    grid-auto-rows: 1fr;
+    padding-left: 2em;
+    padding-right: 2em;
+    /*align-items: flex-start;*/
+}
+
+.card {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 6px 0px rgba(0,0,0,0.3);
+
+    .content {
+        padding: 5px 0 10px 5px;
+        display: flex;
+        flex-direction: column;
+        flex: 1; // 0 auto;
+    }
+
+    .subcontent {
+        align-content: space-between;
+
+        .usermanual-description {
+            font-weight: bold;
+            margin-bottom: 4em;
+        }
+
+        .usermanual-product {
+            vertical-align: bottom;
+        }
+    }
+
+    footer {
+        padding: 10px 10px 0px 0px;
+        align-content: flex-end;
+    }
+
+    .icons {
+        align-content: space-evenly;
+    }
+}
+
+.fa-image-size {
+    font-size: 1.5em;
+    margin: 5px;
+    color: darkgray;
+}
+
+.card-unpublished {
+    background-color: lightyellow;
+}

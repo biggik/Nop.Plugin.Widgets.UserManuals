@@ -1,0 +1,92 @@
+﻿@model UserManualModel
+@using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Plugin.Widgets.UserManuals.Controllers;
+
+@Html.ValidationSummary(false)
+@Html.HiddenFor(model => model.Id)
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <nop-label asp-for="@Model.Description" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="@Model.Description" asp-required="true" />
+                            <span asp-validation-for="@Model.Description" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <nop-label asp-for="@Model.DocumentId" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="@Model.DocumentId" asp-required="true" />
+                            <span asp-validation-for="@Model.DocumentId" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <nop-label asp-for="@Model.OnlineLink" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="@Model.OnlineLink" asp-required="false" />
+                            <span asp-validation-for="@Model.OnlineLink" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <nop-label asp-for="@Model.ManufacturerId" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-select asp-for="@Model.ManufacturerId" asp-items="@Model.AvailableManufacturers" />
+                            <span asp-validation-for="@Model.ManufacturerId" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <nop-label asp-for="@Model.CategoryId" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-select asp-for="@Model.CategoryId" asp-items="@Model.AvailableCategories" />
+                            @Html.ActionLink(T(AdminResources.AddCategoryCaption).Text,
+                                nameof(CategoriesController.Create),
+                                CategoriesController.ControllerName,
+                                null,
+                                null)
+                            <span asp-validation-for="@Model.CategoryId" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <nop-label asp-for="@Model.DisplayOrder" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="@Model.DisplayOrder" asp-required="false" />
+                            <span asp-validation-for="@Model.DisplayOrder" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <nop-label asp-for="@Model.Published" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="@Model.Published" asp-required="false" />
+                            <span asp-validation-for="@Model.Published" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nop-panels id="usermanual-panels">
+            <nop-panel asp-name="usermanual-products" asp-icon="fa fa-cog" asp-title="@T(UserManualResources.Products)" 
+                       asp-hide-block-attribute-name="@false" asp-hide="@false">@await Html.PartialAsync("~/Plugins/Widgets.UserManuals/Views/UserManuals/_CreateOrUpdate.Products.cshtml", Model)</nop-panel>
+        </nop-panels>
+    </div>
+</div>

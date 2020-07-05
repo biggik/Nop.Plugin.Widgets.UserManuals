@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Plugins/Widgets.UserManuals/Views/Shared/_AdminShared.cshtml";
+}
+@model UserManualModel
+@using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Plugin.Widgets.UserManuals.Controllers;
+@{
+    ViewBag.PageTitle = T(AdminResources.EditUserManualCaption).Text;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "usermanual-form" }))
+{
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            @T(AdminResources.EditUserManualCaption)
+            <small>
+                <i class="fa fa-arrow-circle-left"></i>
+                @Html.ActionLink(T(UserManualsActionResources.BackToList).Text,
+                    nameof(UserManualsController.List),
+                    UserManualsController.ControllerName,
+                    new { area = "Admin" },
+                    null)
+            </small>
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="save" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                @T("Admin.Common.SaveContinue")
+            </button>
+            <span id="usermanual-delete" class="btn bg-red">
+                <i class="fa fa-trash-o"></i>
+                @T("Admin.Common.Delete")
+            </span>
+        </div>
+    </div>
+    @await Html.PartialAsync("~/Plugins/Widgets.UserManuals/Views/UserManuals/_CreateOrUpdateUserManual.cshtml", Model)
+}
+
+<nop-delete-confirmation asp-model-id="@Model.Id" asp-button-id="usermanual-delete" asp-action="Delete" />

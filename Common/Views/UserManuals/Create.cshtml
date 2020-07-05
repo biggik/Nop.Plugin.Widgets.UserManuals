@@ -1,0 +1,37 @@
+﻿@{
+    Layout = "~/Plugins/Widgets.UserManuals/Views/Shared/_AdminShared.cshtml";
+}
+@model UserManualModel
+@using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Plugin.Widgets.UserManuals.Controllers;
+@{
+    ViewBag.PageTitle = T(AdminResources.AddUserManualCaption).Text;
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "usermanual-form" }))
+{
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            @T(AdminResources.AddUserManualCaption)
+            <small>
+                <i class="fa fa-arrow-circle-left"></i>
+                @Html.ActionLink(T(UserManualsActionResources.BackToList).Text,
+                    nameof(UserManualsController.List),
+                    UserManualsController.ControllerName,
+                    new { area = "Admin" },
+                    null)
+            </small>
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="save" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                @T("Admin.Common.SaveContinue")
+            </button>
+        </div>
+    </div>
+    <partial name="_CreateOrUpdateUserManual.cshtml" />
+}

@@ -1,0 +1,81 @@
+﻿@{
+    Layout = "~/Plugins/Widgets.UserManuals/Views/Shared/_AdminShared.cshtml";
+}
+@model UserManualSearchModel
+@using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Plugin.Widgets.UserManuals.Controllers;
+@using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Web.Framework.Models.DataTables;
+@{
+    ViewBag.PageTitle = T(AdminResources.UserManualListCaption).Text;
+}
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        @T(AdminResources.UserManualListCaption)
+    </h1>
+    <div class="pull-right">
+        @Html.ActionLink(T(AdminResources.AddUserManualButton).Text,
+            nameof(UserManualsController.Create),
+            UserManualsController.ControllerName,
+            new { area = "Admin" },
+            new { @class = "btn bg-blue" })
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                   @await Html.PartialAsync("Table", new DataTablesModel
+                   {
+                       Name = "usermanual-grid",
+                       UrlRead = new DataUrl(nameof(UserManualsController.ListData), UserManualsController.ControllerName,
+                            new Microsoft.AspNetCore.Routing.RouteValueDictionary{["area"] = "Admin" }),
+                       Length = Model.PageSize,
+                       LengthMenu = Model.AvailablePageSizes,
+                       ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(UserManualModel.ManufacturerName))
+                            {
+                                Title = T(UserManualResources.Manufacturer).Text,
+                                Width = "150"
+                            },
+                            new ColumnProperty(nameof(UserManualModel.CategoryName))
+                            {
+                                Title = T(UserManualResources.Category).Text,
+                                Width = "150"
+                            },
+                            new ColumnProperty(nameof(UserManualModel.Description))
+                            {
+                                Title = T(UserManualResources.Description).Text,
+                                Width = "200"
+                            },
+                            new ColumnProperty(nameof(UserManualModel.OnlineLink))
+                            {
+                                Title = T(UserManualResources.OnlineLink).Text,
+                                Width = "150"
+                            },
+                            new ColumnProperty(nameof(UserManualModel.Published))
+                            {
+                                Title = T(GenericResources.Published).Text,
+                                Width = "100",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(UserManualModel.Id))
+                            {
+                                Title = T(AdminResources.EditUserManualCaption).Text,
+                                Width = "100",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonEdit(
+                                    new DataUrl(@Url.Action(nameof(UserManualsController.Edit), 
+                                                            UserManualsController.ControllerName,
+                                                            new { area = "Admin"})))
+                            }
+                        }
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

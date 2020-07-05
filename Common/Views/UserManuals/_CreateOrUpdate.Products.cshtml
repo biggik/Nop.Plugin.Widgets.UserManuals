@@ -1,0 +1,83 @@
+﻿@model Nop.Plugin.Widgets.UserManuals.Models.UserManualModel
+@using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Plugin.Widgets.UserManuals.Domain;
+@using Nop.Plugin.Widgets.UserManuals.Controllers;
+@using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Web.Framework.Models.DataTables;
+@using Microsoft.AspNetCore.Routing;
+
+<div class="panel-body">
+    <p>
+        @T($"{UserManualResources.Products}.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="panel panel-default">
+            <div class="panel-body">
+                @await Html.PartialAsync("Table", new DataTablesModel
+                {
+                    Name = "usermanualproducts-grid",
+                    UrlRead = new DataUrl(nameof(UserManualsController.ListProductData), UserManualsController.ControllerName, 
+                        new RouteValueDictionary { [nameof(UserManualProductSearchModel.UserManualId)] = Model.UserManualProductSearchModel.UserManualId }),
+                    UrlDelete = new DataUrl(nameof(UserManualsController.ProductDelete), UserManualsController.ControllerName, 
+                        new RouteValueDictionary { [nameof(UserManualProductSearchModel.UserManualId)] = Model.UserManualProductSearchModel.UserManualId }),
+                    BindColumnNameActionDelete = nameof(UserManualProductModel.ProductId),
+                    Length = Model.UserManualSearchModel.PageSize,
+                    LengthMenu = Model.UserManualSearchModel.AvailablePageSizes,
+                    ColumnCollection = new List<ColumnProperty>
+                    {
+                        new ColumnProperty(nameof(UserManualProductModel.ProductName))
+                        {
+                            Title = T(UserManualResources.Product).Text
+                        },
+                        new ColumnProperty(nameof(UserManualProductModel.Published))
+                        {
+                            Title = T(GenericResources.Published).Text,
+                            Width = "100",
+                            ClassName = NopColumnClassDefaults.CenterAll,
+                            Render = new RenderBoolean()
+                        },
+                        new ColumnProperty(nameof(UserManualProductModel.ProductId))
+                        {
+                            Title = T("Admin.Common.View").Text,
+                            Width = "150",
+                            ClassName =  NopColumnClassDefaults.Button,
+                            Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/"))
+                        },
+                        new ColumnProperty(nameof(UserManualProductModel.ProductId))
+                        {
+                            Title = T("Admin.Common.Delete").Text,
+                            Width = "150",
+                            Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                            ClassName =  NopColumnClassDefaults.Button
+                        }
+                    }
+                })
+            </div>
+            <div class="panel-footer">
+                <button type="submit" id="btnAddNewProduct" onclick="javascript:OpenWindow('@(Url.Action(nameof(UserManualsController.ProductAddPopup), UserManualsController.ControllerName, new { userManualId = Model.Id, btnId = "btnRefreshProducts" }))', 800, 800, true); return false;" class="btn btn-primary">
+                    @T("Admin.Promotions.Discounts.AppliedToProducts.AddNew")
+                </button>
+                <input type="submit" id="btnRefreshProducts" style="display: none" />
+                <script>
+                    $(document).ready(function() {
+                        $('#btnRefreshProducts').click(function() {
+                            //refresh grid
+                            updateTable('#usermanualproducts-grid');
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="panel panel-default">
+            <div class="panel-body">
+                @T(UserManualResources.SaveBeforeAddingProducts)
+            </div>
+        </div>
+    }
+</div>

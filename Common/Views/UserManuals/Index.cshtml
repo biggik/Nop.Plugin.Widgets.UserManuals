@@ -1,0 +1,84 @@
+﻿@{
+    Layout = "~/Plugins/Widgets.UserManuals/Views/Shared/_Shared.cshtml";
+
+    Html.AppendCssFileParts("~/lib/fontAwesome/css/font-awesome.min.css");
+}
+@model List<ManufacturerManualsModel>
+@using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Plugin.Widgets.UserManuals.Controllers;
+
+<div class="UserManuals">
+    <div class="section">
+        <div class="title">
+            @T(UserManualResources.ListCaption)
+        </div>
+    </div>
+    <div class="clear"></div>
+    @{
+        foreach (var manufacturer in Model)
+        {
+            if (!string.IsNullOrWhiteSpace(manufacturer.Name))
+            {
+                <div class="manufacturer">
+                    @manufacturer.Name
+                </div>
+            }
+
+            foreach (var category in manufacturer.Categories)
+            {
+                if (!string.IsNullOrWhiteSpace(category.Category.Name))
+                {
+                    <div class="category">
+                        @category.Category.Name
+                    </div>
+                }
+        
+                <main class="cards">
+
+                @foreach (var manual in category.UserManuals)
+                {
+                    <article class="card">
+                        <div class="content">
+                            <div class="subcontent">
+                                <p class="usermanual-description">@manual.Description</p>
+                                @if (manual.ProductSlugs.Any())
+                                {
+                                    <div class="usermanual-product">
+                                        @foreach (var pslug in manual.ProductSlugs)
+                                        {
+                                            <a href="/@pslug.productSlug" title="@pslug.productDescription">@T(UserManualResources.ProductLink)</a>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="footer">
+                            <div class="icons">
+                                @if (manual.DocumentId > 0)
+                                {
+                                    var url = Url.Action(nameof(UserManualsController.UserManualDownload), new { id = manual.DocumentId });
+
+                                    <a href="@url" target="_blank" title="@T(UserManualResources.DownloadText)">
+                                        <i class="fa fa-download fa-image-size" aria-hidden="true"></i>
+                                    </a>
+                                    <br />
+                                }
+                                @if (!string.IsNullOrWhiteSpace(manual.OnlineLink))
+                                {
+                                    <a href="@manual.OnlineLink" target="_blank" title="@T(UserManualResources.OnlineLinkText)">
+                                        <i class="fa fa-eye fa-image-size" aria-hidden="true"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </article>
+
+                }
+        
+                </main>
+            }
+        }
+    }
+</div>
+

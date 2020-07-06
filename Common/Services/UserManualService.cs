@@ -6,8 +6,8 @@ using Nop.Core.Caching;
 using Nop.Plugin.Widgets.UserManuals.Domain;
 using System.Security.Cryptography;
 using Nop.Core.Domain.Catalog;
-using Remotion.Linq.Clauses;
 #if NOP_PRE_4_3
+using Remotion.Linq.Clauses;
 using Nop.Core.Data;
 #else
 using Nop.Data;

@@ -23,7 +23,7 @@
                     }
                     @if (manual.DocumentId > 0)
                     {
-                        var url = Url.Action(nameof(UserManualsController.UserManualDownload), new { id = manual.DocumentId });
+                        var url = Url.Action(nameof(UserManualsController.UserManualDownload), UserManualsController.ControllerName, new { id = manual.DocumentId });
 
                         <a href="@url" target="_blank" class="action" title="@T(UserManualResources.DownloadText)">@T(UserManualsActionResources.Download)
                         </a>

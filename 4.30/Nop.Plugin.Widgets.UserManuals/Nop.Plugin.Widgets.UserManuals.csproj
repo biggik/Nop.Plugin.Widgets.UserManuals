@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Copyright>Copyright © Status ehf</Copyright>
     <Company>Status ehf</Company>
     <Authors>Status ehf</Authors>
@@ -23,7 +23,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\_build\release</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
-    <DefineConstants>TRACE;NOP_PRE_4_3</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
@@ -31,7 +31,7 @@
     <OutputPath>..\_build\debug</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DefineConstants>NOP_PRE_4_3</DefineConstants>
+    <DefineConstants></DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -61,7 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\Common\Data\UserManualsObjectContext.cs" Link="Data\UserManualsObjectContext.cs" />
+    <Compile Include="..\..\Common\Data\SchemaMigration.cs" Link="Data\SchemaMigration.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,13 +72,10 @@
 
   <ItemGroup>
     <Compile Include="..\..\Common\Infrastructure\DependencyRegistrar.cs" Link="Infrastructure\DependencyRegistrar.cs" />
-    <Compile Include="..\..\Common\Infrastructure\PluginDbStartup.cs" Link="Infrastructure\PluginDbStartup.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\Common\Mapping\CategoriesRecordMap.cs" Link="Mapping\CategoriesRecordMap.cs" />
-    <Compile Include="..\..\Common\Mapping\UserManualProductsRecordMap.cs" Link="Mapping\UserManualProductsRecordMap.cs" />
-    <Compile Include="..\..\Common\Mapping\UserManualsRecordMap.cs" Link="Mapping\UserManualsRecordMap.cs" />
+    <Compile Include="..\..\Common\Mapping\TableNameCompatibility.cs" Link="Mapping\TableNameCompatibility.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -182,8 +179,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="n:\nopCommerce 4.20\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
-    <ProjectReference Include="n:\nopCommerce 4.20\Presentation\Nop.Web\Nop.Web.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.30\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.30\Presentation\Nop.Web\Nop.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -259,7 +256,7 @@
   <!-- This target execute after "Build" target -->
   <Target Name="NopTarget" AfterTargets="Build">
     <!-- Delete unnecessary libraries from plugins path -->
-    <MSBuild Projects="n:\nopCommerce 4.20\Build\ClearPluginAssemblies.proj" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+    <MSBuild Projects="n:\nopCommerce 4.30\Build\ClearPluginAssemblies.proj" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if exist ..\BuildHelpers\%25computername%25-widgets-UserManuals-$(ConfigurationName).bat (&#xD;&#xA;  ..\BuildHelpers\%25computername%25-widgets-UserManuals-$(ConfigurationName).bat&#xD;&#xA;)" />

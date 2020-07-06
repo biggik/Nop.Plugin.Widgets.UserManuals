@@ -101,7 +101,10 @@ namespace Nop.Plugin.Widgets.UserManuals
         /// </summary>
         public override void Install()
         {
-            _settingService.SaveSetting(new UserManualsWidgetSettings { });
+            _settingService.SaveSetting(new UserManualsWidgetSettings
+            {
+                WidgetZones = "header_menu_after;productdetails_overview_bottom"
+            });
 
 #if NOP_PRE_4_3
             _objectContext.Install();
@@ -132,7 +135,15 @@ namespace Nop.Plugin.Widgets.UserManuals
             base.Uninstall();
         }
 
-        public string GetWidgetViewComponentName(string widgetZone) => "WidgetsUserManuals";
+        public string GetWidgetViewComponentName(string widgetZone)
+        {
+            if (widgetZone.ToLower().StartsWith("productdetails"))
+            {
+                return "WidgetsProductUserManuals";
+            }
+
+            return "WidgetsUserManuals";
+        }
 
         public void ManageSiteMap(SiteMapNode rootNode)
         {
@@ -151,7 +162,7 @@ namespace Nop.Plugin.Widgets.UserManuals
             }
 
             string T(string format) => _localizationService.GetResource(format) ?? format;
-            
+
             foreach (var item in new List<(string caption, string controller, string action)>
             {
                 (T(UserManualResources.ListCaption), UserManualsController.ControllerName, nameof(UserManualsController.List)),

@@ -21,7 +21,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             new[] { defaultPermission };
 #else
         public virtual HashSet<(string systemRoleName, PermissionRecord[] permissions)> GetDefaultPermissions() =>
-            return new HashSet<(string, PermissionRecord[])> { ("Administrators", new PermissionRecord[0]) };
+            new HashSet<(string, PermissionRecord[])> { ("Administrators", new PermissionRecord[0]) };
 #endif
     }
 }

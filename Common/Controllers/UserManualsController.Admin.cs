@@ -30,21 +30,30 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             var widgetZonesData = GetWidgetZoneData();
             var lookup = widgetZonesData.ToDictionary(x => x.value, y => y.id);
 
-            var currentWidgetZones = (from i in (settings.WidgetZones ?? "").Split(';')
-                                      where lookup.ContainsKey(i)
-                                      select lookup[i]).ToList();
+            List<int> Zones(string zones)
+            {
+                return (from i in (zones ?? "").Split(';')
+                        where lookup.ContainsKey(i)
+                        select lookup[i]).ToList();
+            }
 
+            IList<SelectListItem> AvailableZones(List<int> zones)
+            {
+                return (from wzd in widgetZonesData
+                        select new SelectListItem
+                        {
+                            Text = wzd.name,
+                            Value = wzd.id.ToString(),
+                            Selected = zones.Contains(wzd.id)
+                        }
+                       ).ToList();
+            }
+
+            var currentWidgetZones = Zones(settings.WidgetZones);
             var model = new ConfigurationModel
             {
                 WidgetZones = currentWidgetZones,
-                AvailableWidgetZones = (from wzd in widgetZonesData
-                                        select new SelectListItem
-                                        {
-                                            Text = wzd.name,
-                                            Value = wzd.id.ToString(),
-                                            Selected = currentWidgetZones.Contains(wzd.id)
-                                        }
-                                       ).ToList()
+                AvailableWidgetZones = AvailableZones(currentWidgetZones)
             };
 
             return View($"{Route}{nameof(Configure)}.cshtml", model);
@@ -68,15 +77,20 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             var widgetZonesData = GetWidgetZoneData();
             var lookup = widgetZonesData.ToDictionary(x => x.id, y => y.value);
 
-            settings.WidgetZones = model.WidgetZones != null && model.WidgetZones.Any()
-                ? string.Join(";",
-                        from i in model.WidgetZones
-                        where lookup.ContainsKey(i)
-                        select lookup[i]
-                        )
-                : "";
+            string Join(IList<int> zones)
+            {
+                return model.WidgetZones != null && model.WidgetZones.Any()
+                        ? string.Join(";",
+                                from i in zones
+                                where lookup.ContainsKey(i)
+                                select lookup[i]
+                                )
+                        : "";
+            }
 
-            _settingService.SaveSetting(settings, s => s.WidgetZones, clearCache: false);
+            settings.WidgetZones = Join(model.WidgetZones);
+
+            _settingService.SaveSetting(settings);
             _settingService.ClearCache();
 
             _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));

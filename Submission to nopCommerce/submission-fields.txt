@@ -1,0 +1,23 @@
+Name:
+User Manuals
+
+Short description:
+Allows publishing user manuals on your website, optionally linked to your products
+
+Description:
+<p>This is a nopCommerce widget plugin for managing <strong>user manuals</strong> for displaying on your nopCommerce public site, optionally linked to products. 
+
+    <p>The plugin can display in two widget zones, one for accessing the user manual list (available at /UserManuals), for example integrating with
+        your menu system. The second widget zone is any of the ProductDetailXXX widget zones, where available manuals will be made accessible for the product being viewed.
+    <br>The user manual list is ordered by active products (manuals linked to products that are active), and then by manuals either not with an active product
+        or with an unpublished product.
+    <br>Manuals can also be categorized by manufacturer as well as custom categories. 
+    
+    <p>The plugin behaves similarly to nopCommerce core plugins. It has Admin area menu entries for accessing the functionality, but if you are logged on and have the 
+        appropriate ACL rights to manage user manuals you'll also have a <strong>Manage this page</strong> link in the administration header.
+    <p>The plugin has it's own ACL right (ManageUserManuals) which need to be assigned to the appropriate customer role(s).
+    
+    <p>You can take a look at the <a href="https://demo.status.is" target="_blank">demo site</a> for an example or take a look at the source code on 
+        <a href="https://github.com/biggik/Nop.Plugin.Widgets.UserManuals" target="_blank">GitHub</a>. 
+    
+    <p>This is a completely free plugin, so any requested support or change requests will be managed accordingly. However, the plugin is live on an actual site and will be maintained.</p>

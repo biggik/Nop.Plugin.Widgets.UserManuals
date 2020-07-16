@@ -65,61 +65,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         public IActionResult Index()
         {
-            var model = new List<ManufacturerManualsModel>();
-
-            var manufacturerDict = _manufacturerService.GetAllManufacturers().ToDictionary(x => x.Id, x => x);
-            var categoryDict = _userManualService.GetOrderedCategories(showUnpublished: false).ToDictionary(x => x.Id, x => x);
-
-            string lastManufacturer = "";
-            string lastCategoryName = "";
-            ManufacturerManualsModel manufacturerModel = null;
-            CategoryUserManualModel categoryModel = null;
-
-            foreach (var um in _userManualService.GetOrderedUserManuals(showUnpublished: false))
-            {
-                var manufacturerName = manufacturerDict.ContainsKey(um.ManufacturerId) ? manufacturerDict[um.ManufacturerId].Name : "";
-                if (manufacturerName != lastManufacturer)
-                {
-                    manufacturerModel = new ManufacturerManualsModel(manufacturerName);
-                    model.Add(manufacturerModel);
-                    categoryModel = null;
-                    lastManufacturer = manufacturerName;
-                }
-
-                var categoryName = categoryDict.ContainsKey(um.CategoryId) ? categoryDict[um.CategoryId].Name : "";
-                if (categoryName != lastCategoryName || categoryModel == null)
-                {
-                    categoryModel = new CategoryUserManualModel(new CategoryModel { Name = categoryName });
-                    manufacturerModel.Categories.Add(categoryModel);
-                    lastCategoryName = categoryName;
-                }
-
-                var manualProducts = _userManualService.GetProductsForManual(um.Id);
-                if (manualProducts.Any())
-                {
-                    // We repeat the manual for each product
-                    foreach (var umProd in manualProducts)
-                    {
-                        var umm = um.ToModel();
-                        umm.ProductSlug = _urlRecordService.GetActiveSlug(umProd.userManualProduct.ProductId, nameof(Product), 0); // TODO: use languageId ?
-
-                        if (string.IsNullOrEmpty(umm.ProductSlug))
-                        {
-                            categoryModel.UserManualsForDiscontinuedProducts.Add(umm);
-                        }
-                        else
-                        {
-                            umm.ProductDescription = umProd.product.Name;
-                            categoryModel.UserManualsForActiveProducts.Add(umm);
-                        }
-                    }
-                }
-                else
-                {
-                    // No products = discontinued product
-                    categoryModel.UserManualsForDiscontinuedProducts.Add(um.ToModel());
-                }
-            }
+            var model = _userManualService.GetOrderedUserManualsWithProducts(showUnpublished: false);
 
             if (_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
             {

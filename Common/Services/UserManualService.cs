@@ -6,6 +6,9 @@ using Nop.Core.Caching;
 using Nop.Plugin.Widgets.UserManuals.Domain;
 using System.Security.Cryptography;
 using Nop.Core.Domain.Catalog;
+using Nop.Plugin.Widgets.UserManuals.Models;
+using Nop.Core.Domain.Seo;
+using NUglify.Helpers;
 #if NOP_PRE_4_3
 using Remotion.Linq.Clauses;
 using Nop.Core.Data;
@@ -21,6 +24,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         #region Constants
         private const string _prefix = "Nop.status.userManual.";
         private readonly static string _allKey = _prefix + "all-{0}-{1}-{2}";
+        private readonly static string _uiKey = _prefix + "ui-{0}";
         private readonly static string _categoryKey = _prefix + "usermanualcategory.all-{0}-{1}";
         private readonly static string _productsKey = _prefix + "usermanualproducts.all-{0}-{1}-{2}-{3}";
         private readonly static string _categoriesKey = _prefix + "usermanualcategories.all-{0}-{1}-{2}";
@@ -28,12 +32,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
 
 #if NOP_PRE_4_3
         private readonly static string UserManualsAllKey = _allKey;
+        private readonly static string UserManualsUIKey = _uiKey;
         private readonly static string UserManualsCategoryKey = _categoryKey;
         private readonly static string UserManualProductsKey = _productsKey;
         private readonly static string CategoriesKey = _categoriesKey;
         private readonly static string ProductKey = _productKey;
 #else
         private readonly CacheKey UserManualsAllKey = new CacheKey(_allKey, _prefix);
+        private readonly CacheKey UserManualsUIKey = new CacheKey(_uiKey, _prefix);
         private readonly CacheKey UserManualsCategoryKey = new CacheKey(_categoryKey, _prefix);
         private readonly CacheKey CategoriesKey = new CacheKey(_categoriesKey, _prefix);
         private readonly CacheKey UserManualProductsKey = new CacheKey(_productsKey, _prefix);
@@ -46,6 +52,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         private readonly IRepository<UserManualProduct> _userManualProductRepository;
         private readonly IRepository<UserManualCategory> _categoryRepository;
         private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<UrlRecord> _urlRecordRepository;
         private readonly IRepository<Nop.Core.Domain.Catalog.Manufacturer> _manufacturerRepository;
 #if NOP_PRE_4_3
         private readonly ICacheManager _cacheManager;
@@ -67,7 +74,8 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             IRepository<UserManual> userManualRepository,
             IRepository<UserManualProduct> userManualProductRepository,
             IRepository<UserManualCategory> categoryRespository,
-            IRepository<Product> productRepository)
+            IRepository<Product> productRepository,
+            IRepository<UrlRecord> urlRecordRepository)
         {
             _cacheManager = cacheManager;
 #if !NOP_PRE_4_3
@@ -78,6 +86,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             _userManualProductRepository = userManualProductRepository;
             _categoryRepository = categoryRespository;
             _productRepository = productRepository;
+            _urlRecordRepository = urlRecordRepository;
         }
         #endregion
 
@@ -134,6 +143,153 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                     (from m in list select m.userManual).ToList(),
                     pageIndex,
                     pageSize);
+            });
+        }
+        
+        public virtual List<ManufacturerManualsModel> GetOrderedUserManualsWithProducts(bool showUnpublished)
+        {
+            var key = CreateKey(UserManualsUIKey, showUnpublished);
+            return _cacheManager.Get(key, () =>
+            {
+                var categoryDict = (from category in _categoryRepository.Table
+                                    where showUnpublished || category.Published
+                                    select category
+                                   ).ToDictionary(x => x.Id, x => x);
+                var manufacturerDict = (from manufacturer in _manufacturerRepository.Table
+                                        where showUnpublished || manufacturer.Published
+                                        select manufacturer
+                                       ).ToDictionary(x => x.Id, x => x);
+                var manualProducts = (from manualProduct in _userManualProductRepository.Table
+                                      select manualProduct
+                                     ).ToList();
+                var productIds = manualProducts.Select(x => x.ProductId).Distinct().ToDictionary(x => x, x => x);
+
+                var productInfoDict = (from product in _productRepository.Table
+                                      where productIds.ContainsKey(product.Id)
+                                      join urlRecord in _urlRecordRepository.Table on
+                                             new { EntityId = product.Id, EntityName = "Product", IsActive = true }
+                                                equals
+                                             new { urlRecord.EntityId, urlRecord.EntityName, urlRecord.IsActive }
+                                      select new
+                                      {
+                                          ProductId = product.Id,
+                                          ProductPublished = product.Published,
+                                          ProductDeleted = product.Deleted,
+                                          Slug = urlRecord.Slug
+                                      }
+                                      )
+                                      .ToDictionary(x => x.ProductId, x => x);
+                var manualProductDict = (from manualProduct in manualProducts
+                                         let pinfo = productInfoDict.ContainsKey(manualProduct.ProductId)
+                                                     ? productInfoDict[manualProduct.ProductId]
+                                                     : null
+                                         select new
+                                         {
+                                             UserManualId = manualProduct.UserManualId,
+                                             ProductId = pinfo?.ProductId ?? 0,
+                                             PublishedProduct = pinfo?.ProductPublished ?? false,
+                                             ProductDeleted = pinfo?.ProductDeleted ?? false,
+                                             Slug = pinfo?.Slug ?? null
+                                         }
+                                         )
+                                         .Where(x => !x.ProductDeleted)
+                                         .GroupBy(x => x.UserManualId)
+                                         .ToDictionary(
+                                            g => g.Key, 
+                                            g => (from x in g select (x.ProductId, x.PublishedProduct, x.Slug)).ToList()
+                                        );
+
+                IEnumerable<(UserManualModel userManual, bool publishedProduct)> CrossJoinWithProducts()
+                {
+                    var userManuals = (from userManual in _userManualRepository.Table
+                                       where showUnpublished || userManual.Published
+                                       select userManual
+                                      );
+                    foreach (var userManual in userManuals)
+                    {
+                        var products = manualProductDict.ContainsKey(userManual.Id) ? manualProductDict[userManual.Id] : null;
+                        if (products == null)
+                        {
+                            yield return (userManual.ToModel(), false);
+                        }
+                        else
+                        {
+                            foreach (var product in products)
+                            {
+                                var umm = userManual.ToModel();
+                                umm.ProductSlug = product.Slug;
+                                yield return (umm, product.PublishedProduct);
+                            }
+                        }
+                    }
+                }
+
+                var manualList
+                          = (from data in CrossJoinWithProducts()
+                            let mOrder = manufacturerDict.ContainsKey(data.userManual.ManufacturerId) 
+                                         ? manufacturerDict[data.userManual.ManufacturerId].DisplayOrder 
+                                         : int.MaxValue
+                            let mName = manufacturerDict.ContainsKey(data.userManual.ManufacturerId) 
+                                        ? manufacturerDict[data.userManual.ManufacturerId].Name 
+                                        : ""
+
+                            let cOrder = categoryDict.ContainsKey(data.userManual.CategoryId) 
+                                         ? categoryDict[data.userManual.CategoryId].DisplayOrder 
+                                         : int.MaxValue
+                            let cName = categoryDict.ContainsKey(data.userManual.CategoryId) 
+                                        ? categoryDict[data.userManual.CategoryId].Name 
+                                        : ""
+
+                            select (mId: mOrder, mName, cId: cOrder, cName, data)
+                           )
+                           .OrderBy(x => x.mId)
+                           .ThenBy(x => x.mName)
+                           .ThenBy(x => x.cId)
+                           .ThenBy(x => x.cName)
+                           .ThenBy(x => x.data.userManual.DisplayOrder)
+                           .ThenBy(x => x.data.userManual.Description)
+                           ;
+
+                var list = new List<ManufacturerManualsModel>();
+                string lastManufacturer = "";
+                string lastCategoryName = "";
+                ManufacturerManualsModel manufacturerModel = null;
+                CategoryUserManualModel categoryModel = null;
+
+                foreach (var data in manualList.Select(x => x.data))
+                {
+                    var manufacturerName = manufacturerDict.ContainsKey(data.userManual.ManufacturerId) 
+                                           ? manufacturerDict[data.userManual.ManufacturerId].Name 
+                                           : "";
+                    if (manufacturerName != lastManufacturer)
+                    {
+                        manufacturerModel = new ManufacturerManualsModel(manufacturerName);
+                        list.Add(manufacturerModel);
+                        categoryModel = null;
+                        lastManufacturer = manufacturerName;
+                    }
+
+                    var categoryName = categoryDict.ContainsKey(data.userManual.CategoryId) 
+                                       ? categoryDict[data.userManual.CategoryId].Name 
+                                       : "";
+                    if (categoryName != lastCategoryName || categoryModel == null)
+                    {
+                        categoryModel = new CategoryUserManualModel(new CategoryModel { Name = categoryName });
+                        manufacturerModel.Categories.Add(categoryModel);
+                        lastCategoryName = categoryName;
+                    }
+
+                    if (!string.IsNullOrEmpty(data.userManual.ProductSlug) && data.publishedProduct)
+                    {
+                        categoryModel.UserManualsForActiveProducts.Add(data.userManual);
+                    }
+                    else
+                    {
+                        categoryModel.UserManualsForDiscontinuedProducts.Add(data.userManual);
+                    }
+                }
+
+                return list;
             });
         }
 
@@ -255,7 +411,6 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                        select userManual;
             });
         }
-
 
         public IPagedList<(UserManualProduct userManualProduct, Product product)> GetProductsForManual(int manualId, bool showUnpublished = false,
             int pageIndex = 0, int pageSize = int.MaxValue)

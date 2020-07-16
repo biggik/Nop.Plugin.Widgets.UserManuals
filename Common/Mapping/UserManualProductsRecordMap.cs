@@ -13,7 +13,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Mapping
         {
             builder.ToTable(TableName);
             builder.HasKey(x => x.Id);
-            builder.HasAlternateKey(x => x.UserManualId);
+            builder.HasIndex(x => x.UserManualId);
             base.Configure(builder);
         }
     }

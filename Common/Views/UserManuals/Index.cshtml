@@ -25,58 +25,59 @@
 
             foreach (var category in manufacturer.Categories)
             {
+                var captionedManuals = new []
+                {
+                    (category.UserManualsForActiveProducts, T(UserManualResources.ActiveProductManuals).Text),
+                    (category.UserManualsForDiscontinuedProducts, T(UserManualResources.DiscontinuedProductManuals).Text)
+                };
                 <table>
                     <caption>@category.Category.Name</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">@T(UserManualResources.Product)</th>
-                      <th scope="col"></th>
-                      <th scope="col">@T(UserManualResources.UserManual)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  
-                @foreach (var manual in category.UserManuals)
-                {
-                    string clazz = manual.IsDiscontinuedProduct ? "discontinued-product" : "";
-                    <tr class="@clazz">
-                        <td data-label="@T(UserManualResources.Product)">@manual.SortDescription</td>
-                        <td data-label="">
-                            @if (!string.IsNullOrEmpty(manual.ProductSlug))
-                            {
-                                <a href="@manual.ProductSlug" target="_blank">@T(UserManualResources.ProductLink)</a>
-                            }
-                            else 
-                            {
-                                <p>&nbsp;</p>
-                            }
-                        </td>
-                        <td data-label="@T(UserManualResources.UserManual)">
-                            @if (!string.IsNullOrWhiteSpace(manual.OnlineLink))
-                            {
-                                <a href="@manual.OnlineLink" class="action" target="_blank" title="@T(UserManualResources.OnlineLinkText)">@T(UserManualsActionResources.View)
-                                </a>
-                            }
-                            else 
-                            {
-                                <p>&nbsp;</p>
-                            }
-                            @if (manual.DocumentId > 0)
-                            {
-                                var url = Url.Action(nameof(UserManualsController.UserManualDownload), new { id = manual.DocumentId });
+                    <thead>
+                        <tr>
+                            <th scope="col">@T(UserManualResources.Product)</th>
+                            <th scope="col"></th>
+                            <th scope="col" colspan="2">@T(UserManualResources.UserManual)</th>
+                        </tr>
+                    </thead>
 
-                                <a href="@url" target="_blank" class="action" title="@T(UserManualResources.DownloadText)">@T(UserManualsActionResources.Download)
-                                </a>
-                            }
-                            else 
-                            {
-                                <p>&nbsp;</p>
-                            }
-                        </td>
-                    </tr>
-                }
-        
-                  </tbody>
+                    @foreach (var manuals in captionedManuals)
+                    {
+                        if (manuals.Item1.Count() == 0)
+                        {
+                            continue;
+                        }
+                        <tbody>
+                        <tr class="userManuals-caption"><td colspan=3>@manuals.Item2</td></tr>
+                        @foreach (var manual in manuals.Item1)
+                        {
+                            string clazz = manual.IsDiscontinuedProduct ? "discontinued-product" : "";
+                            <tr class="@clazz">
+                                <td data-label="@T(UserManualResources.Product)">@manual.Description</td>
+                                <td data-label="">
+                                    @if (!string.IsNullOrEmpty(manual.ProductSlug))
+                                    {
+                                        <a href="@manual.ProductSlug" target="_blank">@T(UserManualResources.ProductLink)</a>
+                                    }
+                                </td>
+                                <td data-label="@T(UserManualResources.UserManual)">
+                                    @if (!string.IsNullOrWhiteSpace(manual.OnlineLink))
+                                    {
+                                        <a href="@manual.OnlineLink" class="action" target="_blank" title="@T(UserManualResources.OnlineLinkText)">@T(UserManualsActionResources.View)</a>
+                                    }
+                                </td>
+                                <td data-label="@T(UserManualResources.UserManual)">
+                                    @if (manual.DocumentId > 0)
+                                    {
+                                        var url = Url.Action(nameof(UserManualsController.UserManualDownload), new { id = manual.DocumentId });
+
+                                        <a href="@url" target="_blank" class="action" title="@T(UserManualResources.DownloadText)">@T(UserManualsActionResources.Download)</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+
+                        </tbody>
+                    }
                 </table>
             }
         }

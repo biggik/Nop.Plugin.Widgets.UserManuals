@@ -62,6 +62,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Resources
         [LocaleString(Cultures.EN, "View the user manual online")]
         [LocaleString(Cultures.IS, "Skoða leiðarvísinn á netinu")]
         public const string OnlineLinkText = "Status.UserManualWidget.UserManual.OnlineLinkText";
+
+        [LocaleString(Cultures.EN, "Active products")]
+        [LocaleString(Cultures.IS, "Vörur í sölu")]
+        public const string ActiveProductManuals = "Status.UserManualWidget.UserManual.ActiveProductManuals";
+
+        [LocaleString(Cultures.EN, "Discontinued")]
+        [LocaleString(Cultures.IS, "Vörur hættar í sölu")]
+        public const string DiscontinuedProductManuals = "Status.UserManualWidget.UserManual.DiscontinuedProductManuals";
     }
 
     [LocaleStringProvider]

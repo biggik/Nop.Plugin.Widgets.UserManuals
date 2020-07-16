@@ -3,9 +3,6 @@
 }
 
 .userManuals-products {
-    .userManuals-caption {
-    }
-
     .userManuals-list {
         .userManual{
             padding-bottom:5px;
@@ -34,70 +31,80 @@
     margin-top: 1em;
 }
 
-table {
-    border: 1px solid #ccc;
-    border-collapse: collapse;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    table-layout: auto;
-}
+.UserManuals {
+    table {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: auto;
+    }
 
-table caption {
-    font-size: large;
-    padding-left: 0.3em;
-    padding-top: 1em;
-    padding-bottom: 0.5em;
-    text-align: left;
-}
+    table caption {
+        font-size: large;
+        padding-left: 0.3em;
+        padding-top: 1em;
+        padding-bottom: 0.5em;
+        text-align: left;
+    }
 
-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
+    table tr:nth-child(1) {
+        td {
+            font-style: italic;
+            font-size: larger;
+            text-align: center;
+        }
+    }
 
-table tr th:nth-child(2) {
-    width: 30%;
-}
-table tr th:nth-child(3),
-table tr th:nth-child(4) {
-    width: 20%;
-    white-space: nowrap;
-    text-align: center;
-}
+    table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
 
-table tr td:nth-child(3),
-table tr td:nth-child(4) {
-    text-align: center;
-}
+    table tr th:nth-child(2) {
+        width: 30%;
+    }
 
-table th {
-    background-color: darken(#f2f2f2,15%);
-}
+    table tr th:nth-child(3),
+    table tr th:nth-child(4) {
+        width: 10%;
+        white-space: nowrap;
+        text-align: center;
+    }
 
-table th,
-table td {
-    text-align: left;
-    padding-left: 15px;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-}
+    table tr td:nth-child(3),
+    table tr td:nth-child(4) {
+        text-align: center;
+    }
 
-table th {
-    font-size: .85em;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-}
+    table th {
+        background-color: darken(#f2f2f2,15%);
+    }
 
+    table th,
+    table td {
+        text-align: left;
+        padding-left: 15px;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+    }
+
+    table th {
+        font-size: .85em;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+}
 
 .action {
     background-color: gray;
     border: none;
     color: white;
-    padding: 10px 10px;
+    padding: 5px 10px 5px 10px;
+    margin-right: 5px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    text-wrap: none;
     white-space: nowrap;
 }
 

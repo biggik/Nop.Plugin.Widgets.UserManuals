@@ -2,12 +2,15 @@ using System.Collections.Generic;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Widgets.UserManuals.Domain;
+using Nop.Plugin.Widgets.UserManuals.Models;
 
 namespace Nop.Plugin.Widgets.UserManuals.Services
 {
     public partial interface IUserManualService
     {
         IPagedList<UserManual> GetOrderedUserManuals(bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue);
+        List<ManufacturerManualsModel> GetOrderedUserManualsWithProducts(bool showUnpublished);
+
         IPagedList<UserManualCategory> GetOrderedCategories(bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue);
 
         UserManual GetById(int id);

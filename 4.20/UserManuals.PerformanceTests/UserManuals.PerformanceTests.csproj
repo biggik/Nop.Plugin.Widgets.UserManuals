@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nop.Plugin.Widgets.UserManuals\Nop.Plugin.Widgets.UserManuals.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.20\Libraries\Nop.Core\Nop.Core.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.20\Libraries\Nop.Data\Nop.Data.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.20\Libraries\Nop.Services\Nop.Services.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.20\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.20\Presentation\Nop.Web\Nop.Web.csproj" />
+  </ItemGroup>
+
+</Project>

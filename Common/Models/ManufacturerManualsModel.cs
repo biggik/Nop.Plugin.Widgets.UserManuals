@@ -2,7 +2,12 @@
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-    public class ManufacturerManualsModel
+#if !NOP_4_4
+    public partial class 
+#else
+    public partial record
+#endif
+    ManufacturerManualsModel
     {
         public ManufacturerManualsModel(string name)
         {

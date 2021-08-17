@@ -5,6 +5,7 @@ using Nop.Plugin.Widgets.UserManuals.Services;
 using Nop.Web.Framework.Components;
 using Nop.Web.Models.Catalog;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Widgets.UserManuals.Components
 {
@@ -18,10 +19,18 @@ namespace Nop.Plugin.Widgets.UserManuals.Components
             _userManualService = userManualService;
         }
 
+#if NOP_4_4
+        public async Task<IViewComponentResult> InvokeAsync(RouteValueDictionary values)
+#else
         public IViewComponentResult Invoke(RouteValueDictionary values)
+#endif
         {
             var product = (ProductDetailsModel)values["additionalData"];
+#if NOP_4_4
+            var manuals = await _userManualService.GetByProductIdAsync(product.Id);
+#else
             var manuals = _userManualService.GetByProductId(product.Id);
+#endif
             if (manuals != null && manuals.Count() > 0)
             {
                 return View("~/Plugins/Widgets.UserManuals/Views/Shared/Components/WidgetProductUserManuals/Default.cshtml",

@@ -6,7 +6,12 @@ using System.Collections.Generic;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-    public class ConfigurationModel : BaseNopModel
+#if !NOP_4_4
+    public partial class 
+#else
+    public partial record
+#endif
+    ConfigurationModel : BaseNopModel
     {
         public ConfigurationModel()
         {

@@ -3,7 +3,7 @@ using Nop.Plugin.Widgets.UserManuals.Domain;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-    public static class ModelExtender
+    public static partial class ModelExtender
     {
         public static TDestination MapTo<TSource, TDestination>(this TSource source)
         {

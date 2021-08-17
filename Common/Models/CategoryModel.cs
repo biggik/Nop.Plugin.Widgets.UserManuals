@@ -4,7 +4,12 @@ using Nop.Plugin.Widgets.UserManuals.Resources;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-    public class CategoryModel : BaseNopEntityModel
+#if !NOP_4_4
+    public partial class 
+#else
+    public partial record
+#endif
+     CategoryModel : BaseNopEntityModel
     {
         [NopResourceDisplayName(CategoryResources.Name)]
         public string Name { get; set; }

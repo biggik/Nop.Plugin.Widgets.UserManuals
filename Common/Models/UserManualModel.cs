@@ -8,7 +8,12 @@ using System;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-    public class UserManualModel : BaseNopEntityModel
+#if !NOP_4_4
+    public partial class 
+#else
+    public partial record
+#endif
+    UserManualModel : BaseNopEntityModel
     {
         public UserManualModel()
         {

@@ -11,6 +11,7 @@ using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Models.Extensions;
 using Nop.Web.Framework.Controllers;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Widgets.UserManuals.Controllers
 {
@@ -47,10 +48,22 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
+#if NOP_4_4
+        public async Task<IActionResult> Create()
+#else
         public IActionResult Create()
+#endif
         {
-            if (!_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
+            if (!
+#if NOP_4_4
+                await _permissionService.AuthorizeAsync
+#else
+                _permissionService.Authorize
+#endif
+                (UserManualPermissionProvider.ManageUserManuals))
+            {
                 return AccessDeniedView();
+            }
 
             var model = new CategoryModel();
             return View($"{Route}{nameof(Create)}.cshtml", model);
@@ -59,15 +72,31 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
         [HttpPost, ParameterBasedOnFormNameAttribute("save-continue", "continueEditing")]
+#if NOP_4_4
+        public async Task<IActionResult> Create(CategoryModel model, bool continueEditing)
+#else
         public IActionResult Create(CategoryModel model, bool continueEditing)
+#endif
         {
-            if (!_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
+            if (!
+#if NOP_4_4
+                await _permissionService.AuthorizeAsync
+#else
+                _permissionService.Authorize
+#endif
+                (UserManualPermissionProvider.ManageUserManuals))
+            {
                 return AccessDeniedView();
+            }
 
             if (ModelState.IsValid)
             {
                 var category = model.ToEntity();
+#if NOP_4_4
+                await _userManualService.InsertCategoryAsync(category);
+#else
                 _userManualService.InsertCategory(category);
+#endif
                 return continueEditing
                     ? RedirectToAction(nameof(Edit), new { id = category.Id })
                     : RedirectToAction(nameof(List));
@@ -79,12 +108,26 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
+#if NOP_4_4
+        public async Task<IActionResult> Edit(int id)
+#else
         public IActionResult Edit(int id)
+#endif
         {
-            if (!_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
+            if (!
+#if NOP_4_4
+                await _permissionService.AuthorizeAsync
+#else
+                _permissionService.Authorize
+#endif
+                (UserManualPermissionProvider.ManageUserManuals))
                 return AccessDeniedView();
 
+#if NOP_4_4
+            var category = await _userManualService.GetCategoryByIdAsync(id);
+#else
             var category = _userManualService.GetCategoryById(id);
+#endif
             var model = category.ToModel();
             return View($"{Route}{nameof(Edit)}.cshtml", model);
         }
@@ -92,20 +135,40 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
         [HttpPost, ParameterBasedOnFormNameAttribute("save-continue", "continueEditing")]
+#if NOP_4_4
+        public async Task<IActionResult> Edit(CategoryModel model, bool continueEditing)
+#else
         public IActionResult Edit(CategoryModel model, bool continueEditing)
+#endif
         {
-            if (!_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
+            if (!
+#if NOP_4_4
+                await _permissionService.AuthorizeAsync
+#else
+                _permissionService.Authorize
+#endif
+                (UserManualPermissionProvider.ManageUserManuals))
+            {
                 return AccessDeniedView();
+            }
 
             if (ModelState.IsValid)
             {
+#if NOP_4_4
+                var category = await _userManualService.GetCategoryByIdAsync(model.Id);
+#else
                 var category = _userManualService.GetCategoryById(model.Id);
+#endif
                 if (category != null)
                 {
                     category = model.ToEntity(category);
                 }
 
+#if NOP_4_4
+                await _userManualService.UpdateCategoryAsync(category);
+#else
                 _userManualService.UpdateCategory(category);
+#endif
                 return continueEditing
                     ? RedirectToAction(nameof(Edit), new { id = category.Id })
                     : RedirectToAction(nameof(List));
@@ -118,24 +181,54 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
         [HttpPost]
+#if NOP_4_4
+        public async Task<IActionResult> Delete(int id)
+#else
         public IActionResult Delete(int id)
+#endif
         {
-            if (!_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
+            if (!
+#if NOP_4_4
+                await _permissionService.AuthorizeAsync
+#else
+                _permissionService.Authorize
+#endif
+                (UserManualPermissionProvider.ManageUserManuals))
+            {
                 return AccessDeniedView();
+            }
 
+#if NOP_4_4
+            var category = await _userManualService.GetCategoryByIdAsync(id);
+            if (category != null)
+                await _userManualService.DeleteCategoryAsync(category);
+#else
             var category = _userManualService.GetCategoryById(id);
             if (category != null)
                 _userManualService.DeleteCategory(category);
+#endif
 
             return RedirectToAction(nameof(List), new { area = "Admin" });
         }
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
+#if NOP_4_4
+        public async Task<IActionResult> List()
+#else
         public IActionResult List()
+#endif
         {
-            if (!_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
+            if (!
+#if NOP_4_4
+                await _permissionService.AuthorizeAsync
+#else
+                _permissionService.Authorize
+#endif
+                (UserManualPermissionProvider.ManageUserManuals))
+            {
                 return AccessDeniedView();
+            }
 
             var model = new CategorySearchModel();
             model.SetGridPageSize();
@@ -144,12 +237,29 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
+#if NOP_4_4
+        public async Task<IActionResult> ListData(CategorySearchModel searchModel)
+#else
         public IActionResult ListData(CategorySearchModel searchModel)
+#endif
         {
-            if (!_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
+            if (!
+#if NOP_4_4
+                await _permissionService.AuthorizeAsync
+#else
+                _permissionService.Authorize
+#endif
+                (UserManualPermissionProvider.ManageUserManuals))
+            {
                 return AccessDeniedView();
+            }
 
-            var categories = _userManualService.GetOrderedCategories(showUnpublished:true, searchModel.Page - 1, searchModel.PageSize);
+#if NOP_4_4
+            var categories = await _userManualService.GetOrderedCategoriesAsync
+#else
+            var categories = _userManualService.GetOrderedCategories
+#endif
+                (showUnpublished: true, searchModel.Page - 1, searchModel.PageSize);
             var model = new CategoryListModel().PrepareToGrid(searchModel, categories, () =>
             {
                 return categories.Select(category =>

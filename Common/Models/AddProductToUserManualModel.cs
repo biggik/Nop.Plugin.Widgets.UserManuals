@@ -3,7 +3,13 @@ using System.Collections.Generic;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-    public class AddProductToUserManualModel : BaseNopModel
+
+#if !NOP_4_4
+    public partial class 
+#else
+    public partial record
+#endif
+    AddProductToUserManualModel : BaseNopModel
     {
         #region Ctor
 

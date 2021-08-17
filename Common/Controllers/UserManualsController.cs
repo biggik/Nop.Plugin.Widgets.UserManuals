@@ -1,5 +1,4 @@
-﻿using Nop.Plugin.Widgets.UserManuals.Models;
-using Nop.Plugin.Widgets.UserManuals.Services;
+﻿using Nop.Plugin.Widgets.UserManuals.Services;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Web.Framework.Controllers;
@@ -8,12 +7,9 @@ using Nop.Services.Security;
 using Nop.Core;
 using Nop.Services.Media;
 using Nop.Services.Messages;
-using System.Collections.Generic;
-using System;
 using Nop.Services.Catalog;
-using System.Linq;
 using Nop.Services.Seo;
-using Nop.Core.Domain.Catalog;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Widgets.UserManuals.Controllers
 {
@@ -63,11 +59,20 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             _workContext = workContext;
         }
 
+#if NOP_4_4
+        public async Task<IActionResult> Index()
+#else
         public IActionResult Index()
+#endif
         {
+#if NOP_4_4
+            var model = await _userManualService.GetOrderedUserManualsWithProductsAsync(showUnpublished: false);
+            if (await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+#else
             var model = _userManualService.GetOrderedUserManualsWithProducts(showUnpublished: false);
-
             if (_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
+#endif
+
             {
                 DisplayEditLink(Url.Action(nameof(List), ControllerName, new { area = "Admin" }));
             }
@@ -75,9 +80,17 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             return View($"{Route}{nameof(Index)}.cshtml", model);
         }
 
+#if NOP_4_4
+        public async Task<IActionResult> UserManualDownload(int id)
+#else
         public IActionResult UserManualDownload(int id)
+#endif
         {
+#if NOP_4_4
+            var download = await _downloadService.GetDownloadByIdAsync(id);
+#else
             var download = _downloadService.GetDownloadById(id);
+#endif
             return File(download.DownloadBinary, download.ContentType, download.Filename + download.Extension);
         }
     }

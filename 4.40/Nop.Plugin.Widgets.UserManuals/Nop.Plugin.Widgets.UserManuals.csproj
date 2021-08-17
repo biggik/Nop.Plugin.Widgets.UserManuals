@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)../../Common/Common.Build.props" />
-  
+
   <ItemGroup>
     <None Remove="logo.jpg" />
     <None Remove="plugin.json" />
@@ -14,15 +14,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\_build\release</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NOP_4_4</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\_build\debug</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
+    <DefineConstants>NOP_4_4</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>TRACE;NOP_4_4</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -125,9 +126,6 @@
     <None Include="..\..\Common\Views\UserManuals\_CreateOrUpdate.Products.cshtml" Link="Views\UserManuals\_CreateOrUpdate.Products.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\Common\Views\UserManuals\_UserManualSearch.cshtml" Link="Views\UserManuals\_UserManualSearch.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="..\..\Common\Views\UserManuals\List.cshtml" Link="Views\UserManuals\List.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -173,8 +171,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="n:\nopCommerce 4.30\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
-    <ProjectReference Include="n:\nopCommerce 4.30\Presentation\Nop.Web\Nop.Web.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.40\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+    <ProjectReference Include="n:\nopCommerce 4.40\Presentation\Nop.Web\Nop.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -187,7 +185,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="nopLocalizationHelper" Version="0.5.0" />
+    <PackageReference Include="nopLocalizationHelper" Version="0.6.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -250,7 +248,7 @@
   <!-- This target execute after "Build" target -->
   <Target Name="NopTarget" AfterTargets="Build">
     <!-- Delete unnecessary libraries from plugins path -->
-    <MSBuild Projects="n:\nopCommerce 4.30\Build\ClearPluginAssemblies.proj" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+    <MSBuild Projects="n:\nopCommerce 4.40\Build\ClearPluginAssemblies.proj" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if exist ..\BuildHelpers\%25computername%25-widgets-UserManuals-$(ConfigurationName).bat (&#xD;&#xA;  ..\BuildHelpers\%25computername%25-widgets-UserManuals-$(ConfigurationName).bat&#xD;&#xA;)" />

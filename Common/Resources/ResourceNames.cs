@@ -70,6 +70,10 @@ namespace Nop.Plugin.Widgets.UserManuals.Resources
         [LocaleString(Cultures.EN, "Discontinued")]
         [LocaleString(Cultures.IS, "Vörur hættar í sölu")]
         public const string DiscontinuedProductManuals = "Status.UserManualWidget.UserManual.DiscontinuedProductManuals";
+
+        [LocaleString(Cultures.EN, "Name")]
+        [LocaleString(Cultures.IS, "Nafn")]
+        public const string SearchName = "Status.UserManualWidget.UserManual.SearchName";
     }
 
     [LocaleStringProvider]

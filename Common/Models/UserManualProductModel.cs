@@ -4,7 +4,12 @@ using Nop.Plugin.Widgets.UserManuals.Resources;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-    public class UserManualProductModel : BaseNopEntityModel
+#if !NOP_4_4
+    public partial class 
+#else
+    public partial record
+#endif
+    UserManualProductModel : BaseNopEntityModel
     {
         public UserManualProductModel()
         {

@@ -15,9 +15,9 @@ dotnet build %project%.csproj --configuration=Release --no-incremental
 
 cd ..\..
 
-cd 4.20\%project%
-Echo building 4.20 of %project%
-rd ..\_build\release\. /s /q > nul
-dotnet build %project%.csproj --configuration=Release --no-incremental
+REM cd 4.20\%project%
+REM Echo building 4.20 of %project%
+REM rd ..\_build\release\. /s /q > nul
+REM dotnet build %project%.csproj --configuration=Release --no-incremental
 
-cd ..\..
+REM cd ..\..

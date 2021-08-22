@@ -1,8 +1,8 @@
-﻿{
+{
   "Group": "Widgets",
   "FriendlyName": "UserManuals",
   "SystemName": "Widgets.UserManuals",
-  "Version": "1.2",
+  "Version": "1.2.0",
   "SupportedVersions": [ "4.40" ],
   "Author": "Status ehf",
   "DisplayOrder": 1,

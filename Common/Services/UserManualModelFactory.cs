@@ -30,7 +30,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             _baseAdminModelFactory = baseAdminModelFactory;
         }
 
-#if NOP_4_4
+#if NOP_ASYNC
         public async virtual Task<AddProductToUserManualSearchModel> PrepareAddProductToUserManualSearchModelAsync(AddProductToUserManualSearchModel searchModel)
 #else
         public virtual AddProductToUserManualSearchModel PrepareAddProductToUserManualSearchModel(AddProductToUserManualSearchModel searchModel)
@@ -40,35 +40,35 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                 throw new ArgumentNullException(nameof(searchModel));
 
             //prepare available categories
-#if NOP_4_4
+#if NOP_ASYNC
             await _baseAdminModelFactory.PrepareCategoriesAsync(searchModel.AvailableCategories);
 #else
             _baseAdminModelFactory.PrepareCategories(searchModel.AvailableCategories);
 #endif
 
             //prepare available manufacturers
-#if NOP_4_4
+#if NOP_ASYNC
             await _baseAdminModelFactory.PrepareManufacturersAsync(searchModel.AvailableManufacturers);
 #else
             _baseAdminModelFactory.PrepareManufacturers(searchModel.AvailableManufacturers);
 #endif
 
             //prepare available stores
-#if NOP_4_4
+#if NOP_ASYNC
             await _baseAdminModelFactory.PrepareStoresAsync(searchModel.AvailableStores);
 #else
             _baseAdminModelFactory.PrepareStores(searchModel.AvailableStores);
 #endif
 
             //prepare available vendors
-#if NOP_4_4
+#if NOP_ASYNC
             await _baseAdminModelFactory.PrepareVendorsAsync(searchModel.AvailableVendors);
 #else
             _baseAdminModelFactory.PrepareVendors(searchModel.AvailableVendors);
 #endif
 
             //prepare available product types
-#if NOP_4_4
+#if NOP_ASYNC
             await _baseAdminModelFactory.PrepareProductTypesAsync(searchModel.AvailableProductTypes);
 #else
             _baseAdminModelFactory.PrepareProductTypes(searchModel.AvailableProductTypes);
@@ -80,7 +80,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             return searchModel;
         }
 
-#if NOP_4_4
+#if NOP_ASYNC
         public async virtual Task<AddProductToUserManualListModel> PrepareAddProductToUserManualListModelAsync
 #else
         public virtual AddProductToUserManualListModel PrepareAddProductToUserManualListModel
@@ -91,7 +91,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get products
-#if NOP_4_4
+#if NOP_ASYNC
             var products = await _productService.SearchProductsAsync(showHidden: true,
                 categoryIds: new List<int> { searchModel.SearchCategoryId },
                 manufacturerIds: new List<int> { searchModel.SearchManufacturerId },
@@ -107,7 +107,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare grid model
-#if NOP_4_4
+#if NOP_ASYNC
             var model = await new AddProductToUserManualListModel()
                 .PrepareToGridAsync(searchModel, products, () =>
                 {
@@ -120,7 +120,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
 #endif
                     {
                         var productModel = product.ToModel<ProductModel>();
-#if NOP_4_4
+#if NOP_ASYNC
                     productModel.SeName = await _urlRecordService.GetSeNameAsync(product, 0, true, false);
 #else
                     productModel.SeName = _urlRecordService.GetSeName(product, 0, true, false);

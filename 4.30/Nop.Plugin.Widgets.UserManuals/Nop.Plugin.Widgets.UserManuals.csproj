@@ -252,6 +252,12 @@
     <!-- Delete unnecessary libraries from plugins path -->
     <MSBuild Projects="n:\nopCommerce 4.30\Build\ClearPluginAssemblies.proj" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
   </Target>
+  <Target Name="FilterCopyLocalItems" AfterTargets="ResolveLockFileCopyLocalProjectDeps">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != 'nopLocalizationHelper'" />
+    </ItemGroup>
+  </Target>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if exist ..\BuildHelpers\%25computername%25-widgets-UserManuals-$(ConfigurationName).bat (&#xD;&#xA;  ..\BuildHelpers\%25computername%25-widgets-UserManuals-$(ConfigurationName).bat&#xD;&#xA;)" />
   </Target>

@@ -1,4 +1,4 @@
-#if !NOP_4_4
+#if !NOP_ASYNC
 using Autofac;
 #else
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +20,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Infrastructure
 {
     public class DependencyRegistrar : IDependencyRegistrar
     {
-#if !NOP_4_4
+#if !NOP_ASYNC
         public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
         {
             builder.RegisterType<UserManualService>().As<IUserManualService>().InstancePerLifetimeScope();
@@ -51,8 +51,8 @@ namespace Nop.Plugin.Widgets.UserManuals.Infrastructure
 #else
         public void Register(IServiceCollection services, ITypeFinder typeFinder, AppSettings appSettings)
         {
-            services.AddScoped<UserManualService>();
-            services.AddScoped<UserManualModelFactory>();
+            services.AddScoped<IUserManualService, UserManualService>();
+            services.AddScoped<IUserManualModelFactory, UserManualModelFactory>();
         }
 #endif
 

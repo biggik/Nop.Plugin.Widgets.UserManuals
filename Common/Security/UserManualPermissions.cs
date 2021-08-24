@@ -16,12 +16,12 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             };
 
 #if NOP_PRE_4_3
-        private static readonly DefaultPermissionRecord defaultPermission = new DefaultPermissionRecord { CustomerRoleSystemName = "Administrators" };
+        private static readonly DefaultPermissionRecord defaultPermission = new DefaultPermissionRecord { CustomerRoleSystemName = "Administrators", PermissionRecords = new[] { ManageUserManuals } };
         public virtual IEnumerable<DefaultPermissionRecord> GetDefaultPermissions() =>
             new[] { defaultPermission };
 #else
         public virtual HashSet<(string systemRoleName, PermissionRecord[] permissions)> GetDefaultPermissions() =>
-            new HashSet<(string, PermissionRecord[])> { ("Administrators", new PermissionRecord[0]) };
+            new HashSet<(string, PermissionRecord[])> { ("Administrators", new[] { ManageUserManuals }) };
 #endif
     }
 }

@@ -19,14 +19,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Components
             _userManualService = userManualService;
         }
 
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IViewComponentResult> InvokeAsync(RouteValueDictionary values)
 #else
         public IViewComponentResult Invoke(RouteValueDictionary values)
 #endif
         {
             var product = (ProductDetailsModel)values["additionalData"];
-#if NOP_4_4
+#if NOP_ASYNC
             var manuals = await _userManualService.GetByProductIdAsync(product.Id);
 #else
             var manuals = _userManualService.GetByProductId(product.Id);

@@ -20,23 +20,23 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
     {
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> Configure()
 #else
         public IActionResult Configure()
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
 #endif
                 (UserManualPermissionProvider.ManageUserManuals))
             {
-                return BadRequest();
+                return AccessDeniedView();
             }
-#if NOP_4_4
+#if NOP_ASYNC
             var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
             var settings = await _settingService.LoadSettingAsync<UserManualsWidgetSettings>(storeScope);
 #else
@@ -80,32 +80,32 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [Area(AreaNames.Admin)]
         [HttpPost, ActionName("Configure")]
         [FormValueRequired("save")]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> Configure(ConfigurationModel model)
 #else
         public IActionResult Configure(ConfigurationModel model)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
 #endif
                 (UserManualPermissionProvider.ManageUserManuals))
             {
-                return BadRequest();
+                return AccessDeniedView();
             }
 
             if (!ModelState.IsValid)
             {
-#if NOP_4_4
+#if NOP_ASYNC
                 return await Configure();
 #else
                 return Configure();
 #endif
             }
-#if NOP_4_4
+#if NOP_ASYNC
             var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
             var settings = await _settingService.LoadSettingAsync<UserManualsWidgetSettings>(storeScope);
 #else
@@ -129,7 +129,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
             settings.WidgetZones = Join(model.WidgetZones);
 
-#if NOP_4_4
+#if NOP_ASYNC
             await _settingService.SaveSettingAsync(settings);
             await _settingService.ClearCacheAsync();
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
@@ -145,14 +145,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> List()
 #else
         public IActionResult List()
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -178,14 +178,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                 .ToList();
         }
 
-#if NOP_4_4
+#if NOP_ASYNC
         private async Task<IList<SelectListItem>> GetAllAvailableCategoriesAsync(int? selectedCategoryId = null)
 #else
         private IList<SelectListItem> GetAllAvailableCategories(int? selectedCategoryId = null)
 #endif
         {
             Core.IPagedList<Domain.UserManualCategory> categories =
-#if NOP_4_4
+#if NOP_ASYNC
                 await _userManualService.GetOrderedCategoriesAsync(showUnpublished: true);
 #else
                 _userManualService.GetOrderedCategories(showUnpublished: true);
@@ -202,7 +202,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                     .ToList();
             list.Insert(0, new SelectListItem
             {
-#if NOP_4_4
+#if NOP_ASYNC
                 Text = (await _localizationService.GetLocaleStringResourceByNameAsync(GenericResources.None, (await _workContext.GetWorkingLanguageAsync()).Id)).ResourceValue,
 #else
                 Text = _localizationService.GetLocaleStringResourceByName(GenericResources.None).ResourceValue,
@@ -212,14 +212,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             return list;
         }
 
-#if NOP_4_4
+#if NOP_ASYNC
         private async Task<IList<SelectListItem>> GetAllAvailableManufacturersAsync(int selectedManufacturerId)
 #else
         private IList<SelectListItem> GetAllAvailableManufacturers(int selectedManufacturerId)
 #endif
         {
             var manufacturers =
-#if NOP_4_4
+#if NOP_ASYNC
                 await _manufacturerService.GetAllManufacturersAsync(showHidden: false);
 #else
                 _manufacturerService.GetAllManufacturers(showHidden: false);
@@ -235,7 +235,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                     .ToList();
             list.Insert(0, new SelectListItem
             {
-#if NOP_4_4
+#if NOP_ASYNC
                 Text = (await _localizationService.GetLocaleStringResourceByNameAsync(GenericResources.None, (await _workContext.GetWorkingLanguageAsync()).Id)).ResourceValue,
 #else
                 Text = _localizationService.GetLocaleStringResourceByName(GenericResources.None).ResourceValue,
@@ -245,7 +245,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             return list;
         }
 
-#if NOP_4_4
+#if NOP_ASYNC
         private async Task<UserManualModel> PopulateModelListsAsync(UserManualModel model = null)
 #else
         private UserManualModel PopulateModelLists(UserManualModel model = null)
@@ -253,7 +253,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         {
             if (model == null) model = new UserManualModel();
 
-#if NOP_4_4
+#if NOP_ASYNC
             model.AvailableCategories = await GetAllAvailableCategoriesAsync(model.CategoryId);
             model.AvailableManufacturers = await GetAllAvailableManufacturersAsync(model.ManufacturerId);
 #else
@@ -272,14 +272,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
         [HttpPost]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> Delete(int id)
 #else
         public IActionResult Delete(int id)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -289,7 +289,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                 return AccessDeniedView();
             }
 
-#if NOP_4_4
+#if NOP_ASYNC
             var userManual = await _userManualService.GetByIdAsync(id);
             if (userManual != null)
                 await _userManualService.DeleteUserManualAsync(userManual);
@@ -304,14 +304,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> Create()
 #else
         public IActionResult Create()
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -320,7 +320,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             {
                 return AccessDeniedView();
             }
-#if NOP_4_4
+#if NOP_ASYNC
             var model = await PopulateModelListsAsync();
 #else
             var model = PopulateModelLists();
@@ -331,7 +331,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> Create
 #else
         public IActionResult Create
@@ -339,7 +339,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             (UserManualModel model, bool continueEditing)
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -353,7 +353,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             {
                 var userManual = model.ToEntity();
 
-#if NOP_4_4
+#if NOP_ASYNC
                 await _userManualService.InsertUserManualAsync(userManual);
 #else
                 _userManualService.InsertUserManual(userManual);
@@ -364,7 +364,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             }
 
             //If we got this far, something failed, redisplay form
-#if NOP_4_4
+#if NOP_ASYNC
             await PopulateModelListsAsync(model);
 #else
             PopulateModelLists(model);
@@ -374,14 +374,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> Edit(int id)
 #else
         public IActionResult Edit(int id)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -390,7 +390,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             {
                 return AccessDeniedView();
             }
-#if NOP_4_4
+#if NOP_ASYNC
             var userManual = await _userManualService.GetByIdAsync(id);
 #else
             var userManual = _userManualService.GetById(id);
@@ -401,7 +401,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             }
 
             var model = userManual.ToModel();
-#if NOP_4_4
+#if NOP_ASYNC
             await PopulateModelListsAsync(model);
 #else
             PopulateModelLists(model);
@@ -412,7 +412,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> Edit
 #else
         public IActionResult Edit
@@ -420,7 +420,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             (UserManualModel model, bool continueEditing)
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -432,7 +432,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
             if (ModelState.IsValid)
             {
-#if NOP_4_4
+#if NOP_ASYNC
                 var userManual = await _userManualService.GetByIdAsync(model.Id);
 #else
                 var userManual = _userManualService.GetById(model.Id);
@@ -442,7 +442,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                     userManual = model.ToEntity(userManual);
                 }
 
-#if NOP_4_4
+#if NOP_ASYNC
                 await _userManualService.UpdateUserManualAsync(userManual);
 #else
                 _userManualService.UpdateUserManual(userManual);
@@ -453,7 +453,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             }
 
             //If we got this far, something failed, redisplay form
-#if NOP_4_4
+#if NOP_ASYNC
             await PopulateModelListsAsync(model);
 #else
             PopulateModelLists(model);
@@ -463,14 +463,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> ListData(CategorySearchModel searchModel)
 #else
         public IActionResult ListData(CategorySearchModel searchModel)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -480,7 +480,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                 return AccessDeniedView();
             }
 
-#if NOP_4_4
+#if NOP_ASYNC
             var manufacturerDict = (await _manufacturerService.GetAllManufacturersAsync(showHidden: true)).ToDictionary(x => x.Id, x => x);
             var categoryDict = (await _userManualService.GetOrderedCategoriesAsync(showUnpublished: true)).ToDictionary(x => x.Id, x => x);
 
@@ -513,14 +513,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
         [HttpPost]
-#if NOP_4_4
+#if NOP_ASYNC
         public async Task<IActionResult> ListProductData(UserManualProductSearchModel searchModel)
 #else
         public IActionResult ListProductData(UserManualProductSearchModel searchModel)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -530,7 +530,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                 return AccessDeniedView();
             }
 
-#if NOP_4_4
+#if NOP_ASYNC
             var data = await _userManualService.GetProductsForManualAsync
 #else
             var data = _userManualService.GetProductsForManual
@@ -556,14 +556,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
-#if NOP_4_4
+#if NOP_ASYNC
         public virtual async Task<IActionResult> ProductDelete(int userManualId, int productId)
 #else
         public virtual IActionResult ProductDelete(int userManualId, int productId)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -574,7 +574,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             }
 
             //try to get a discount with the specified id
-#if NOP_4_4
+#if NOP_ASYNC
             var manual = await _userManualService.GetByIdAsync(userManualId)
 #else
             var manual = _userManualService.GetById(userManualId)
@@ -582,7 +582,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                 ?? throw new ArgumentException("No user manual with the specified id found", nameof(userManualId));
 
             //try to get a product with the specified id
-#if NOP_4_4
+#if NOP_ASYNC
             var product = await _productService.GetProductByIdAsync(productId)
 #else
             var product = _productService.GetProductById(productId)
@@ -590,7 +590,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
                 ?? throw new ArgumentException("No product found with the specified id", nameof(productId));
 
             //remove discount
-#if NOP_4_4
+#if NOP_ASYNC
             await _userManualService.RemoveProductFromManualAsync(userManualId, productId);
 #else
             _userManualService.RemoveProductFromManual(userManualId, productId);
@@ -601,14 +601,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
-#if NOP_4_4
+#if NOP_ASYNC
         public virtual async Task<IActionResult> ProductAddPopup(int userManualId)
 #else
         public virtual IActionResult ProductAddPopup(int userManualId)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -619,7 +619,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             }
 
             //prepare model
-#if NOP_4_4
+#if NOP_ASYNC
             var model = await _userManualModelFactory.PrepareAddProductToUserManualSearchModelAsync
 #else
             var model = _userManualModelFactory.PrepareAddProductToUserManualSearchModel
@@ -632,28 +632,28 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [HttpPost]
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
-#if NOP_4_4
+#if NOP_ASYNC
         public virtual async Task<IActionResult> ProductAddPopupList(AddProductToUserManualSearchModel searchModel)
 #else
         public virtual IActionResult ProductAddPopupList(AddProductToUserManualSearchModel searchModel)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
 #endif
                 (UserManualPermissionProvider.ManageUserManuals))
             {
-#if NOP_4_4
+#if NOP_ASYNC
                 return await AccessDeniedDataTablesJson();
 #else
                 return AccessDeniedDataTablesJson();
 #endif
             }
             //prepare model
-#if NOP_4_4
+#if NOP_ASYNC
             var model = await _userManualModelFactory.PrepareAddProductToUserManualListModelAsync(searchModel);
 #else
             var model = _userManualModelFactory.PrepareAddProductToUserManualListModel(searchModel);
@@ -666,14 +666,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]
         [FormValueRequired("save")]
-#if NOP_4_4
+#if NOP_ASYNC
         public virtual async Task<IActionResult> ProductAddPopup(AddProductToUserManualModel model)
 #else
         public virtual IActionResult ProductAddPopup(AddProductToUserManualModel model)
 #endif
         {
             if (!
-#if NOP_4_4
+#if NOP_ASYNC
                 await _permissionService.AuthorizeAsync
 #else
                 _permissionService.Authorize
@@ -684,14 +684,14 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             }
 
             //try to get a discount with the specified id
-#if NOP_4_4
+#if NOP_ASYNC
             var discount = await _userManualService.GetByIdAsync(model.UserManualId)
 #else
             var discount = _userManualService.GetById(model.UserManualId)
 #endif
                 ?? throw new ArgumentException("No user manual found with the specified id");
 
-#if NOP_4_4
+#if NOP_ASYNC
             var selectedProducts = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
 #else
             var selectedProducts = _productService.GetProductsByIds(model.SelectedProductIds.ToArray());
@@ -700,7 +700,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             {
                 foreach (var product in selectedProducts)
                 {
-#if NOP_4_4
+#if NOP_ASYNC
                     await _userManualService.AddProductToManualAsync(model.UserManualId, product.Id);
 #else
                     _userManualService.AddProductToManual(model.UserManualId, product.Id);

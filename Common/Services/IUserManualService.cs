@@ -9,7 +9,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
 {
     public partial interface IUserManualService
     {
-#if NOP_4_4
+#if NOP_ASYNC
         Task<IPagedList<UserManual>> GetOrderedUserManualsAsync(bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue);
         Task<List<ManufacturerManualsModel>> GetOrderedUserManualsWithProductsAsync(bool showUnpublished);
 

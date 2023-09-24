@@ -21,22 +21,22 @@ namespace Nop.Plugin.Widgets.UserManuals.Models
                 .ForMember(um => um.OnlineLink, mo => mo.MapFrom(m => m.OnlineLink))
                 .ForMember(um => um.Published, mo => mo.MapFrom(m => m.Published))
                 .ForMember(um => um.DisplayOrder, mo => mo.MapFrom(m => m.DisplayOrder))
-                .ForAllOtherMembers(x => x.Ignore());
+                ;
 
             CreateMap<UserManualProductModel, UserManualProduct>();
             CreateMap<UserManualProduct, UserManualProductModel>()
                 .ForMember(um => um.Id, mo => mo.MapFrom(m => m.Id))
                 .ForMember(um => um.UserManualId, mo => mo.MapFrom(m => m.UserManualId))
                 .ForMember(um => um.ProductId, mo => mo.MapFrom(m => m.ProductId))
-                .ForAllOtherMembers(x => x.Ignore());
+                ;
 
             CreateMap<CategoryModel, UserManualCategory>();
             CreateMap<UserManualCategory, CategoryModel>()
-               .ForMember(cm => cm.Id, mo => mo.MapFrom(c => c.Id))
-               .ForMember(cm => cm.Name, mo => mo.MapFrom(c => c.Name))
+                .ForMember(cm => cm.Id, mo => mo.MapFrom(c => c.Id))
+                .ForMember(cm => cm.Name, mo => mo.MapFrom(c => c.Name))
                 .ForMember(cm => cm.Published, mo => mo.MapFrom(c => c.Published))
                 .ForMember(cm => cm.DisplayOrder, mo => mo.MapFrom(c => c.DisplayOrder))
-                .ForAllOtherMembers(x => x.Ignore());
+                ;
             
         }
 

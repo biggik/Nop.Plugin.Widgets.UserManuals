@@ -17,6 +17,7 @@ using Nop.Services.Security;
 using Nop.Plugin.Widgets.UserManuals.Controllers;
 using nopLocalizationHelper;
 using System.Threading.Tasks;
+using Nop.Plugin.Widgets.UserManuals.Components;
 
 namespace Nop.Plugin.Widgets.UserManuals
 {
@@ -205,15 +206,21 @@ namespace Nop.Plugin.Widgets.UserManuals
 #endif
         }
 
+#if NOP_46
+        public Type GetWidgetViewComponent(string widgetZone)
+        {
+            return widgetZone.ToLower().StartsWith("productdetails")
+                ? typeof(WidgetsProductUserManualsViewComponent)
+                : typeof(WidgetsUserManualsViewComponent);
+        }
+#else
         public string GetWidgetViewComponentName(string widgetZone)
         {
-            if (widgetZone.ToLower().StartsWith("productdetails"))
-            {
-                return "WidgetsProductUserManuals";
-            }
-
-            return "WidgetsUserManuals";
+            return widgetZone.ToLower().StartsWith("productdetails") 
+                ? "WidgetsProductUserManuals" 
+                : "WidgetsUserManuals";
         }
+#endif
 
 #if NOP_ASYNC
         public async Task ManageSiteMapAsync

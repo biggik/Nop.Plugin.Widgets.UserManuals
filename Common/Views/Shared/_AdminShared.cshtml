@@ -2,7 +2,5 @@
 @{
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-@{
-    Html.AddCssFileParts("~/Plugins/Widgets.UserManuals/Content/UserManuals.css", excludeFromBundle: true);
-}
+<link rel="stylesheet" href="~/Plugins/Widgets.UserManuals/Content/UserManuals.css" />
 @RenderBody()

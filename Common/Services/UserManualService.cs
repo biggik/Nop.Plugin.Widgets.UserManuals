@@ -377,9 +377,9 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         }
 
 #if NOP_ASYNC
-        public async virtual Task<IEnumerable<UserManual>> GetByProductIdAsync
+        public async virtual Task<IList<UserManual>> GetByProductIdAsync
 #else
-        public virtual IEnumerable<UserManual> GetByProductId
+        public virtual IList<UserManual> GetByProductId
 #endif
             (int productId)
         {
@@ -390,7 +390,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             return _cacheManager.Get(key, () =>
 #endif
             {
-                return from userManualProduct in _userManualProductRepository.Table
+                var m = from userManualProduct in _userManualProductRepository.Table
                             where userManualProduct.ProductId == productId
                        join p_userManual in _userManualRepository.Table on 
                             userManualProduct.UserManualId equals p_userManual.Id into pj_userManual
@@ -398,6 +398,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                             where userManual.Published
                        select userManual
                        ;
+                return m.ToList();
             });
         }
 
@@ -537,9 +538,9 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         }
 
 #if NOP_ASYNC
-        public async virtual Task<IEnumerable<UserManual>> GetUserManualsByCategoryIdAsync
+        public async virtual Task<IList<UserManual>> GetUserManualsByCategoryIdAsync
 #else
-        public virtual IEnumerable<UserManual> GetUserManualsByCategoryId
+        public virtual IList<UserManual> GetUserManualsByCategoryId
 #endif
             (int categoryId, bool showUnpublished = false)
         {
@@ -550,7 +551,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             return _cacheManager.Get(key, () =>
 #endif
             {
-                return from userManual in _userManualRepository.Table
+                var m = from userManual in _userManualRepository.Table
                        where userManual.CategoryId == categoryId
                              && (showUnpublished
                                  ||
@@ -559,6 +560,8 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                        orderby userManual.DisplayOrder, userManual.Description
 
                        select userManual;
+
+                return m.ToList();
             });
         }
 

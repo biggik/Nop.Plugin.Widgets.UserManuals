@@ -16,7 +16,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         Task<IPagedList<UserManualCategory>> GetOrderedCategoriesAsync(bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue);
 
         Task<UserManual> GetByIdAsync(int id);
-        Task<IEnumerable<UserManual>> GetByProductIdAsync(int productId);
+        Task<IList<UserManual>> GetByProductIdAsync(int productId);
 
         Task InsertUserManualAsync(UserManual userManual);
         Task InsertCategoryAsync(UserManualCategory category);
@@ -27,7 +27,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         Task DeleteUserManualAsync(UserManual userManual);
         Task DeleteCategoryAsync(UserManualCategory category);
 
-        Task<IEnumerable<UserManual>> GetUserManualsByCategoryIdAsync(int categoryId, bool showUnpublished = false);
+        Task<IList<UserManual>> GetUserManualsByCategoryIdAsync(int categoryId, bool showUnpublished = false);
 
         Task<IPagedList<(UserManualProduct userManualProduct, Product product)>> GetProductsForManualAsync(int manualId, bool showUnpublished = false,
             int pageIndex = 0, int pageSize = int.MaxValue);
@@ -43,7 +43,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         IPagedList<UserManualCategory> GetOrderedCategories(bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue);
 
         UserManual GetById(int id);
-        IEnumerable<UserManual> GetByProductId(int productId);
+        IList<UserManual> GetByProductId(int productId);
 
         void InsertUserManual(UserManual userManual);
         void InsertCategory(UserManualCategory category);
@@ -54,7 +54,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         void DeleteUserManual(UserManual userManual);
         void DeleteCategory(UserManualCategory category);
 
-        IEnumerable<UserManual> GetUserManualsByCategoryId(int categoryId, bool showUnpublished = false);
+        IList<UserManual> GetUserManualsByCategoryId(int categoryId, bool showUnpublished = false);
 
         IPagedList<(UserManualProduct userManualProduct, Product product)> GetProductsForManual(int manualId, bool showUnpublished = false, 
             int pageIndex = 0, int pageSize = int.MaxValue);

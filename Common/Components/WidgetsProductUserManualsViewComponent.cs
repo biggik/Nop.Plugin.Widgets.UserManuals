@@ -31,7 +31,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Components
 #else
             var manuals = _userManualService.GetByProductId(product.Id);
 #endif
-            if (manuals != null && manuals.Count() > 0)
+            if (manuals != null && manuals.Any())
             {
                 return View("~/Plugins/Widgets.UserManuals/Views/Shared/Components/WidgetProductUserManuals/Default.cshtml",
                     (from manual in manuals

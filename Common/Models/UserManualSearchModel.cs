@@ -6,12 +6,7 @@ using Nop.Plugin.Widgets.UserManuals.Resources;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-#if !NOP_ASYNC
-    public partial class 
-#else
-    public partial record
-#endif
-    UserManualSearchModel : BaseSearchModel
+    public partial record UserManualSearchModel : BaseSearchModel
     {
         #region Ctor
 

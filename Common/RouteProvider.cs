@@ -2,34 +2,20 @@
 using Nop.Plugin.Widgets.UserManuals.Controllers;
 using Nop.Web.Framework.Localization;
 using Nop.Web.Framework.Mvc.Routing;
-#if !NOP_PRE_4_3
 using Microsoft.AspNetCore.Builder;
-#endif
 
 namespace Nop.Plugin.Widgets.UserManuals
 {
     public partial class RouteProvider : IRouteProvider
     {
-        public void RegisterRoutes(
-#if NOP_PRE_4_3
-            IRouteBuilder builder
-#else
-            IEndpointRouteBuilder builder
-#endif
-            )
+        public void RegisterRoutes(IEndpointRouteBuilder builder)
         {
             RegisterPublicRoutes(builder);
             RegisterCategoryAdminRoutes(builder);
             RegisterUserManualAdminRoutes(builder);
         }
 
-        private void RegisterPublicRoutes(
-#if NOP_PRE_4_3
-            IRouteBuilder builder
-#else
-            IEndpointRouteBuilder builder
-#endif
-            )
+        private void RegisterPublicRoutes(IEndpointRouteBuilder builder)
         {
             string controller = UserManualsController.ControllerName;
             string namePrefix = $"Plugins.{controller}.";
@@ -39,17 +25,10 @@ namespace Nop.Plugin.Widgets.UserManuals
             string actionSanitized = "";
 
             void Build(string routeAction = null) =>
-#if NOP_PRE_4_3
-                builder.MapLocalizedRoute(
-                        name:$"{namePrefix}{action}",
-                        template:routeAction ?? $"{routePrefix}/{actionSanitized}",
-                        defaults:new { controller = controller, action = action });
-#else
                 builder.MapControllerRoute(
                         name: $"{namePrefix}{action}",
                         pattern: routeAction ?? $"{routePrefix}/{actionSanitized}",
                         defaults: new { controller = controller, action = action });
-#endif
 
             // Index
             action = nameof(UserManualsController.Index);
@@ -57,13 +36,7 @@ namespace Nop.Plugin.Widgets.UserManuals
             Build(routePrefix); // Skip action - to get only /UserManuals
         }
 
-        private void RegisterCategoryAdminRoutes(
-#if NOP_PRE_4_3
-            IRouteBuilder builder
-#else
-            IEndpointRouteBuilder builder
-#endif
-            )
+        private void RegisterCategoryAdminRoutes(IEndpointRouteBuilder builder)
         {
             string controller = CategoriesController.ControllerName;
             string namePrefix = $"Plugins.{controller}.";
@@ -73,18 +46,11 @@ namespace Nop.Plugin.Widgets.UserManuals
             string actionSanitized = "";
 
             void Build() =>
-#if NOP_PRE_4_3
-                builder.MapLocalizedRoute(
-                                name:$"{namePrefix}{action}",
-                                template:$"{routePrefix}/{actionSanitized}",
-                                defaults:new { controller = controller, action = action, area = "Admin" });
-#else
                 builder.MapAreaControllerRoute(
                                 name: $"{namePrefix}{action}",
                                 areaName: "Admin",
                                 pattern: $"{routePrefix}/{actionSanitized}",
                                 defaults: new { controller = controller, action = action, area = "Admin" });
-#endif
 
             // Create category
             action = nameof(CategoriesController.Create);
@@ -112,13 +78,7 @@ namespace Nop.Plugin.Widgets.UserManuals
             Build();
         }
 
-        private void RegisterUserManualAdminRoutes(
-#if NOP_PRE_4_3
-            IRouteBuilder builder
-#else
-            IEndpointRouteBuilder builder
-#endif
-            )
+        private void RegisterUserManualAdminRoutes(IEndpointRouteBuilder builder)
         {
             string controller = UserManualsController.ControllerName;
             string namePrefix = $"Plugins.{controller}.";
@@ -128,18 +88,11 @@ namespace Nop.Plugin.Widgets.UserManuals
             string actionSanitized = "";
 
             void Build() =>
-#if NOP_PRE_4_3
-                builder.MapLocalizedRoute(
-                                name:$"{namePrefix}{action}",
-                                template:$"{routePrefix}/{actionSanitized}",
-                                defaults:new { controller = controller, action = action, area = "Admin" });
-#else
                 builder.MapAreaControllerRoute(
                                 name: $"{namePrefix}{action}",
                                 areaName: "Admin",
                                 pattern: $"{routePrefix}/{actionSanitized}",
                                 defaults: new { controller = controller, action = action, area = "Admin" });
-#endif
 
             // Configure
             action = nameof(UserManualsController.Configure);

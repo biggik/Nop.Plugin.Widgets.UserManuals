@@ -10,13 +10,8 @@ using Nop.Plugin.Widgets.UserManuals.Models;
 using Nop.Core.Domain.Seo;
 using NUglify.Helpers;
 using System.Threading.Tasks;
-#if NOP_PRE_4_3
-using Remotion.Linq.Clauses;
-using Nop.Core.Data;
-#else
 using Nop.Data;
 using Nop.Services.Caching;
-#endif
 
 namespace Nop.Plugin.Widgets.UserManuals.Services
 {
@@ -32,15 +27,6 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         private readonly static string _productKey = _prefix + "usermanualproduct-{0}";
         private readonly static string _categoryKey = _prefix + "usermanualcategory-{0}";
 
-#if NOP_PRE_4_3
-        private readonly static string UserManualsAllKey = _allKey;
-        private readonly static string UserManualsUIKey = _uiKey;
-        private readonly static string UserManualsCategoryKey = _usermanualCategoryKey;
-        private readonly static string UserManualProductsKey = _productsKey;
-        private readonly static string CategoriesKey = _categoriesKey;
-        private readonly static string ProductKey = _productKey;
-        private readonly static string CategoryKey = _categoryKey;
-#else
         private readonly CacheKey UserManualsAllKey = new CacheKey(_allKey, _prefix);
         private readonly CacheKey UserManualsUIKey = new CacheKey(_uiKey, _prefix);
         private readonly CacheKey UserManualsCategoryKey = new CacheKey(_usermanualCategoryKey, _prefix);
@@ -48,7 +34,6 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         private readonly CacheKey UserManualProductsKey = new CacheKey(_productsKey, _prefix);
         private readonly CacheKey ProductKey = new CacheKey(_productKey, _prefix);
         private readonly CacheKey CategoryKey = new CacheKey(_categoryKey, _prefix);
-#endif
         #endregion
 
         #region Fields
@@ -58,26 +43,12 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<UrlRecord> _urlRecordRepository;
         private readonly IRepository<Nop.Core.Domain.Catalog.Manufacturer> _manufacturerRepository;
-#if NOP_PRE_4_3
-        private readonly ICacheManager _cacheManager;
-#else
-#if !NOP_ASYNC
-        private readonly ICacheKeyService _cacheKeyService;
-#endif
         private readonly IStaticCacheManager _cacheManager;
-#endif
-#endregion
+        #endregion
 
         #region Ctor
         public UserManualService(
-#if NOP_PRE_4_3
-            ICacheManager cacheManager,
-#else
-#if !NOP_ASYNC
-            ICacheKeyService cacheKeyService,
-#endif
             IStaticCacheManager cacheManager,
-#endif
             IRepository<Manufacturer> manufacturerRepository,
             IRepository<UserManual> userManualRepository,
             IRepository<UserManualProduct> userManualProductRepository,
@@ -86,11 +57,6 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             IRepository<UrlRecord> urlRecordRepository)
         {
             _cacheManager = cacheManager;
-#if !NOP_PRE_4_3
-#if !NOP_ASYNC
-            _cacheKeyService = cacheKeyService;
-#endif
-#endif
             _manufacturerRepository = manufacturerRepository;
             _userManualRepository = userManualRepository;
             _userManualProductRepository = userManualProductRepository;
@@ -100,44 +66,25 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         }
         #endregion
 
-#if NOP_ASYNC
         private IStaticCacheManager CacheImpl => _cacheManager;
-#elif !NOP_PRE_4_3
-        private ICacheKeyService CacheImpl => _cacheKeyService;
-#endif
 
-#if NOP_PRE_4_3
-        private string CreateKey(string template, params object[] arguments)
-        {
-            return string.Format(template, arguments);
-        }
-#else
         private CacheKey CreateKey(CacheKey cacheKey, params object[] arguments)
         {
-            return CacheImpl.PrepareKeyForShortTermCache(cacheKey, arguments);
+            return CacheImpl.PrepareKeyForDefaultCache(cacheKey, arguments);
         }
-#endif
 
-#region Methods
-#if NOP_ASYNC
+        #region Methods
         public async virtual Task<IPagedList<UserManual>> GetOrderedUserManualsAsync
-#else
-        public virtual IPagedList<UserManual> GetOrderedUserManuals
-#endif
             (bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var key = CreateKey(UserManualsAllKey, showUnpublished, pageIndex, pageSize);
-#if NOP_ASYNC
             return await _cacheManager.GetAsync(key, () =>
-#else
-            return _cacheManager.Get(key, () =>
-#endif
             {
                 var categoryDict = (from category in _categoryRepository.Table
                                     where showUnpublished || category.Published
                                     select category
                                    ).ToDictionary(x => x.Id, x => x);
-                var manufacturerDict = (from manufacturer in _manufacturerRepository.Table 
+                var manufacturerDict = (from manufacturer in _manufacturerRepository.Table
                                         where showUnpublished || manufacturer.Published
                                         select manufacturer
                                        ).ToDictionary(x => x.Id, x => x);
@@ -154,7 +101,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                             let cOrder = categoryDict.ContainsKey(userManual.CategoryId) ? categoryDict[userManual.CategoryId].DisplayOrder : int.MaxValue
                             let cName = categoryDict.ContainsKey(userManual.CategoryId) ? categoryDict[userManual.CategoryId].Name : ""
 
-                            select (mId: mOrder, mName, cId:cOrder, cName, userManual)
+                            select (mId: mOrder, mName, cId: cOrder, cName, userManual)
                            )
                            .OrderBy(x => x.mId)
                            .ThenBy(x => x.mName)
@@ -171,19 +118,11 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             });
         }
 
-#if NOP_ASYNC
         public virtual async Task<List<ManufacturerManualsModel>> GetOrderedUserManualsWithProductsAsync
-#else
-        public virtual List<ManufacturerManualsModel> GetOrderedUserManualsWithProducts
-#endif
             (bool showUnpublished)
         {
             var key = CreateKey(UserManualsUIKey, showUnpublished);
-#if NOP_ASYNC
             return await _cacheManager.GetAsync(key, () =>
-#else
-            return _cacheManager.Get(key, () =>
-#endif
             {
                 return OrderedUserManualsWithProductsCommon(_categoryRepository.Table, showUnpublished);
             });
@@ -332,19 +271,11 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             return list;
         }
 
-#if NOP_ASYNC
         public async virtual Task<IPagedList<UserManualCategory>> GetOrderedCategoriesAsync
-#else
-        public virtual IPagedList<UserManualCategory> GetOrderedCategories
-#endif
             (bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var key = CreateKey(CategoriesKey, showUnpublished, pageIndex, pageSize);
-#if NOP_ASYNC
             return await _cacheManager.GetAsync(key, () =>
-#else
-            return _cacheManager.Get(key, () =>
-#endif
             {
                 var list = _categoryRepository.Table
                         .Where(c => c.Published || showUnpublished)
@@ -358,226 +289,125 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
             });
         }
 
-#if NOP_ASYNC
-        public async virtual Task<UserManual> GetByIdAsync
-#else
-        public virtual UserManual GetById
-#endif
-            (int id)
+        public async virtual Task<UserManual> GetByIdAsync(int id)
         {
             if (id == 0)
             {
                 return null;
             }
-#if NOP_ASYNC
             return await _userManualRepository.GetByIdAsync(id);
-#else
-            return _userManualRepository.GetById(id);
-#endif
         }
 
-#if NOP_ASYNC
-        public async virtual Task<IList<UserManual>> GetByProductIdAsync
-#else
-        public virtual IList<UserManual> GetByProductId
-#endif
-            (int productId)
+        public async virtual Task<IList<UserManual>> GetByProductIdAsync(int productId)
         {
             var key = CreateKey(ProductKey, productId);
-#if NOP_ASYNC
             return await _cacheManager.GetAsync(key, () =>
-#else
-            return _cacheManager.Get(key, () =>
-#endif
             {
                 var m = from userManualProduct in _userManualProductRepository.Table
-                            where userManualProduct.ProductId == productId
-                       join p_userManual in _userManualRepository.Table on 
-                            userManualProduct.UserManualId equals p_userManual.Id into pj_userManual
-                       from userManual in pj_userManual.DefaultIfEmpty()
-                            where userManual.Published
-                       select userManual
+                        where userManualProduct.ProductId == productId
+                        join p_userManual in _userManualRepository.Table on
+                             userManualProduct.UserManualId equals p_userManual.Id into pj_userManual
+                        from userManual in pj_userManual.DefaultIfEmpty()
+                        where userManual.Published
+                        select userManual
                        ;
                 return m.ToList();
             });
         }
 
-#if NOP_ASYNC
-        public async virtual Task InsertUserManualAsync
-#else
-        public virtual void InsertUserManual
-#endif
-            (UserManual userManual)
+        public async virtual Task InsertUserManualAsync(UserManual userManual)
         {
             if (userManual == null)
             {
                 throw new ArgumentNullException(nameof(userManual));
             }
 
-#if NOP_ASYNC
             await _userManualRepository.InsertAsync(userManual);
 
             await _cacheManager.RemoveByPrefixAsync(_prefix);
-#else
-            _userManualRepository.Insert(userManual);
-
-            _cacheManager.RemoveByPrefix(_prefix);
-#endif
         }
 
-#if NOP_ASYNC
-        public async virtual Task InsertCategoryAsync
-#else
-        public virtual void InsertCategory
-#endif
-            (UserManualCategory category)
+        public async virtual Task InsertCategoryAsync(UserManualCategory category)
         {
             if (category == null)
             {
                 throw new ArgumentNullException(nameof(category));
             }
-#if NOP_ASYNC
             await _categoryRepository.InsertAsync(category);
 
             await _cacheManager.RemoveByPrefixAsync(_prefix);
-#else
-            _categoryRepository.Insert(category);
-
-            _cacheManager.RemoveByPrefix(_prefix);
-#endif
         }
 
-#if NOP_ASYNC
-        public async virtual Task UpdateUserManualAsync
-#else
-        public virtual void UpdateUserManual
-#endif
-            (UserManual userManual)
+        public async virtual Task UpdateUserManualAsync(UserManual userManual)
         {
             if (userManual == null)
             {
                 throw new ArgumentNullException(nameof(userManual));
             }
 
-#if NOP_ASYNC
             await _userManualRepository.UpdateAsync(userManual);
 
             await _cacheManager.RemoveByPrefixAsync(_prefix);
-#else
-            _userManualRepository.Update(userManual);
-
-            _cacheManager.RemoveByPrefix(_prefix);
-#endif
         }
 
-#if NOP_ASYNC
-        public async virtual Task UpdateCategoryAsync
-#else
-        public virtual void UpdateCategory
-#endif
-            (UserManualCategory category)
+        public async virtual Task UpdateCategoryAsync(UserManualCategory category)
         {
             if (category == null)
             {
                 throw new ArgumentNullException(nameof(category));
             }
 
-#if NOP_ASYNC
             await _categoryRepository.UpdateAsync(category);
 
             await _cacheManager.RemoveByPrefixAsync(_prefix);
-#else
-            _categoryRepository.Update(category);
-
-            _cacheManager.RemoveByPrefix(_prefix);
-#endif
         }
 
-#if NOP_ASYNC
-        public async virtual Task DeleteUserManualAsync
-#else
-        public virtual void DeleteUserManual
-#endif
-            (UserManual userManual)
+        public async virtual Task DeleteUserManualAsync(UserManual userManual)
         {
             if (userManual == null)
             {
                 throw new ArgumentNullException(nameof(userManual));
             }
-#if NOP_ASYNC
             await _userManualRepository.DeleteAsync(userManual);
 
             await _cacheManager.RemoveByPrefixAsync(_prefix);
-#else
-            _userManualRepository.Delete(userManual);
-
-            _cacheManager.RemoveByPrefix(_prefix);
-#endif
         }
 
-#if NOP_ASYNC
-        public async virtual Task DeleteCategoryAsync
-#else
-        public virtual void DeleteCategory
-#endif
-            (UserManualCategory category)
+        public async virtual Task DeleteCategoryAsync(UserManualCategory category)
         {
             if (category == null)
             {
                 throw new ArgumentNullException(nameof(category));
             }
-#if NOP_ASYNC
             await _categoryRepository.DeleteAsync(category);
 
             await _cacheManager.RemoveByPrefixAsync(_prefix);
-#else
-            _categoryRepository.Delete(category);
-
-            _cacheManager.RemoveByPrefix(_prefix);
-#endif
         }
 
-#if NOP_ASYNC
-        public async virtual Task<IList<UserManual>> GetUserManualsByCategoryIdAsync
-#else
-        public virtual IList<UserManual> GetUserManualsByCategoryId
-#endif
-            (int categoryId, bool showUnpublished = false)
+        public async virtual Task<IList<UserManual>> GetUserManualsByCategoryIdAsync(int categoryId, bool showUnpublished = false)
         {
             var key = CreateKey(UserManualsCategoryKey, categoryId, showUnpublished);
-#if NOP_ASYNC
             return await _cacheManager.GetAsync(key, () =>
-#else
-            return _cacheManager.Get(key, () =>
-#endif
             {
                 var m = from userManual in _userManualRepository.Table
-                       where userManual.CategoryId == categoryId
-                             && (showUnpublished
-                                 ||
-                                 userManual.Published)
+                        where userManual.CategoryId == categoryId
+                              && (showUnpublished
+                                  ||
+                                  userManual.Published)
 
-                       orderby userManual.DisplayOrder, userManual.Description
+                        orderby userManual.DisplayOrder, userManual.Description
 
-                       select userManual;
+                        select userManual;
 
                 return m.ToList();
             });
         }
 
-#if NOP_ASYNC
         public async Task<IPagedList<(UserManualProduct userManualProduct, Product product)>> GetProductsForManualAsync
-#else
-        public IPagedList<(UserManualProduct userManualProduct, Product product)> GetProductsForManual
-#endif
         (int manualId, bool showUnpublished = false, int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var key = CreateKey(UserManualProductsKey, manualId, showUnpublished, pageIndex, pageSize);
-#if NOP_ASYNC
             return await _cacheManager.GetAsync(key, () =>
-#else
-            return _cacheManager.Get(key, () =>
-#endif
             {
                 var manuProducts = (from userManualProduct in _userManualProductRepository.Table
                                     where userManualProduct.UserManualId == manualId
@@ -597,17 +427,12 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                        (from manuProduct in manuProducts
                         where visibleProducts.ContainsKey(manuProduct.ProductId)
                         select (manuProduct, visibleProducts[manuProduct.ProductId])).ToList(),
-                       pageIndex, 
+                       pageIndex,
                        pageSize);
             });
         }
 
-#if NOP_ASYNC
-        public async Task AddProductToManualAsync
-#else
-        public void AddProductToManual
-#endif
-            (int manualId, int productId)
+        public async Task AddProductToManualAsync(int manualId, int productId)
         {
             var manuProducts = from userManualProduct in _userManualProductRepository.Table
                                where userManualProduct.UserManualId == manualId
@@ -616,31 +441,18 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
 
             if (!manuProducts.Any())
             {
-#if NOP_ASYNC
                 await _userManualProductRepository.InsertAsync(
-#else
-                _userManualProductRepository.Insert(
-#endif
                     new UserManualProduct
                     {
                         UserManualId = manualId,
                         ProductId = productId
                     });
 
-#if NOP_ASYNC
                 await _cacheManager.RemoveByPrefixAsync(_prefix);
-#else
-                _cacheManager.RemoveByPrefix(_prefix);
-#endif
             }
         }
 
-#if NOP_ASYNC
-        public async Task RemoveProductFromManualAsync
-#else
-        public void RemoveProductFromManual
-#endif
-            (int manualId, int productId)
+        public async Task RemoveProductFromManualAsync(int manualId, int productId)
         {
             var manuProduct = (from userManualProduct in _userManualProductRepository.Table
                                where userManualProduct.UserManualId == manualId
@@ -650,31 +462,16 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
 
             if (manuProduct != null)
             {
-#if NOP_ASYNC
                 await _userManualProductRepository.DeleteAsync(manuProduct);
 
                 await _cacheManager.RemoveByPrefixAsync(_prefix);
-#else
-                _userManualProductRepository.Delete(manuProduct);
-
-                _cacheManager.RemoveByPrefix(_prefix);
-#endif
             }
         }
 
-#if NOP_ASYNC
-        public async virtual Task<UserManualCategory> GetCategoryByIdAsync
-#else
-        public virtual UserManualCategory GetCategoryById
-#endif
-            (int categoryId)
+        public async virtual Task<UserManualCategory> GetCategoryByIdAsync(int categoryId)
         {
             var key = CreateKey(CategoryKey, categoryId);
-#if NOP_ASYNC
             return await _cacheManager.GetAsync(key, () =>
-#else
-            return _cacheManager.Get(key, () =>
-#endif
             {
                 return (from category in _categoryRepository.Table
                         where category.Id == categoryId
@@ -682,6 +479,6 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
                     .FirstOrDefault();
             });
         }
-#endregion
+        #endregion
     }
 }

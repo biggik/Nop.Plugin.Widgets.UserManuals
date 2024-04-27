@@ -2,12 +2,7 @@
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-#if !NOP_ASYNC
-    public partial class 
-#else
-    public partial record
-#endif
-    UserManualProductSearchModel : BaseSearchModel
+    public partial record UserManualProductSearchModel : BaseSearchModel
     {
         public int UserManualId { get; set; }
     }

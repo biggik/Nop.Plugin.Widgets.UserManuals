@@ -6,12 +6,7 @@ using System.Collections.Generic;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-#if !NOP_ASYNC
-    public partial class 
-#else
-    public partial record
-#endif
-    ConfigurationModel : BaseNopModel
+    public partial record ConfigurationModel : BaseNopModel
     {
         public ConfigurationModel()
         {

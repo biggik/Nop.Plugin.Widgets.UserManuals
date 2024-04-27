@@ -2,13 +2,7 @@
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-
-#if !NOP_ASYNC
-    public partial class 
-#else
-    public partial record
-#endif
-    CategoryListModel : BasePagedListModel<CategoryModel>
+    public partial record CategoryListModel : BasePagedListModel<CategoryModel>
     {
     }
 }

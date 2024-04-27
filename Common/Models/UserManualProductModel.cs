@@ -1,15 +1,8 @@
 ﻿using Nop.Web.Framework.Models;
-using Nop.Web.Framework.Mvc.ModelBinding;
-using Nop.Plugin.Widgets.UserManuals.Resources;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-#if !NOP_ASYNC
-    public partial class 
-#else
-    public partial record
-#endif
-    UserManualProductModel : BaseNopEntityModel
+    public partial record UserManualProductModel : BaseNopEntityModel
     {
         public UserManualProductModel()
         {

@@ -9,7 +9,6 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
 {
     public partial interface IUserManualService
     {
-#if NOP_ASYNC
         Task<IPagedList<UserManual>> GetOrderedUserManualsAsync(bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue);
         Task<List<ManufacturerManualsModel>> GetOrderedUserManualsWithProductsAsync(bool showUnpublished);
 
@@ -36,33 +35,5 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
         Task RemoveProductFromManualAsync(int manualId, int productId);
 
         Task<UserManualCategory> GetCategoryByIdAsync(int categoryId);
-#else
-        IPagedList<UserManual> GetOrderedUserManuals(bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue);
-        List<ManufacturerManualsModel> GetOrderedUserManualsWithProducts(bool showUnpublished);
-
-        IPagedList<UserManualCategory> GetOrderedCategories(bool showUnpublished, int pageIndex = 0, int pageSize = int.MaxValue);
-
-        UserManual GetById(int id);
-        IList<UserManual> GetByProductId(int productId);
-
-        void InsertUserManual(UserManual userManual);
-        void InsertCategory(UserManualCategory category);
-
-        void UpdateUserManual(UserManual userManual);
-        void UpdateCategory(UserManualCategory category);
-
-        void DeleteUserManual(UserManual userManual);
-        void DeleteCategory(UserManualCategory category);
-
-        IList<UserManual> GetUserManualsByCategoryId(int categoryId, bool showUnpublished = false);
-
-        IPagedList<(UserManualProduct userManualProduct, Product product)> GetProductsForManual(int manualId, bool showUnpublished = false, 
-            int pageIndex = 0, int pageSize = int.MaxValue);
-
-        void AddProductToManual(int manualId, int productId);
-        void RemoveProductFromManual(int manualId, int productId);
-
-        UserManualCategory GetCategoryById(int categoryId);
-#endif
     }
 }

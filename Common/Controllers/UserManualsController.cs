@@ -59,20 +59,10 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             _workContext = workContext;
         }
 
-#if NOP_ASYNC
         public async Task<IActionResult> Index()
-#else
-        public IActionResult Index()
-#endif
         {
-#if NOP_ASYNC
             var model = await _userManualService.GetOrderedUserManualsWithProductsAsync(showUnpublished: false);
             if (await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
-#else
-            var model = _userManualService.GetOrderedUserManualsWithProducts(showUnpublished: false);
-            if (_permissionService.Authorize(UserManualPermissionProvider.ManageUserManuals))
-#endif
-
             {
                 DisplayEditLink(Url.Action(nameof(List), ControllerName, new { area = "Admin" }));
             }
@@ -80,17 +70,9 @@ namespace Nop.Plugin.Widgets.UserManuals.Controllers
             return View($"{Route}{nameof(Index)}.cshtml", model);
         }
 
-#if NOP_ASYNC
         public async Task<IActionResult> UserManualDownload(int id)
-#else
-        public IActionResult UserManualDownload(int id)
-#endif
         {
-#if NOP_ASYNC
             var download = await _downloadService.GetDownloadByIdAsync(id);
-#else
-            var download = _downloadService.GetDownloadById(id);
-#endif
             return File(download.DownloadBinary, download.ContentType, download.Filename + download.Extension);
         }
     }

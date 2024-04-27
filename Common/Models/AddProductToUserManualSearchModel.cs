@@ -5,12 +5,7 @@ using System.Collections.Generic;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
-#if !NOP_ASYNC
-    public partial class 
-#else
-    public partial record
-#endif
-    AddProductToUserManualSearchModel : BaseSearchModel
+    public partial record AddProductToUserManualSearchModel : BaseSearchModel
     {
         #region Ctor
 

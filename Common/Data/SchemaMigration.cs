@@ -2,31 +2,15 @@
 using Nop.Data.Migrations;
 using Nop.Plugin.Widgets.UserManuals.Domain;
 using FluentMigrator.Infrastructure;
-
-#if NOP_45
 using Nop.Data.Extensions;
-#endif
 
 namespace Nop.Plugin.Widgets.UserManuals.Data
 {
-#if !NOP_45
-    [SkipMigrationOnUpdate]
-#endif
     [NopMigration("2020/07/04 09:10:11:6455422", "UserManuals Plugin base schema", MigrationProcessType.Installation)]
     public class SchemaMigration : AutoReversingMigration
     {
-#if !NOP_45
-        protected IMigrationManager _migrationManager;
-
-        public SchemaMigration(IMigrationManager migrationManager)
-        {
-            _migrationManager = migrationManager;
-        }
-#endif
-
         public override void Up()
         {
-#if NOP_45
             if (!_productExists)
             {
                 Create.TableFor<UserManualProduct>();
@@ -39,14 +23,8 @@ namespace Nop.Plugin.Widgets.UserManuals.Data
             {
                 Create.TableFor<UserManual>();
             }
-#else
-            _migrationManager.BuildTable<UserManualProduct>(Create);
-            _migrationManager.BuildTable<UserManualCategory>(Create);
-            _migrationManager.BuildTable<UserManual>(Create);
-#endif
         }
 
-#if NOP_45
         private bool _productExists;
         private bool _categoryExists;
         private bool _manualExists;
@@ -60,6 +38,5 @@ namespace Nop.Plugin.Widgets.UserManuals.Data
 
             base.GetUpExpressions(context);
         }
-#endif
     }
 }

@@ -1,5 +1,6 @@
 ﻿@model Nop.Plugin.Widgets.UserManuals.Models.UserManualModel
 @using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Plugin.Widgets.UserManuals.Extensions;
 @using Nop.Plugin.Widgets.UserManuals.Domain;
 @using Nop.Plugin.Widgets.UserManuals.Controllers;
 @using Nop.Plugin.Widgets.UserManuals.Resources;
@@ -17,9 +18,9 @@
                 @await Html.PartialAsync("Table", new DataTablesModel
                 {
                     Name = "usermanualproducts-grid",
-                    UrlRead = new DataUrl(nameof(UserManualsController.ListProductData), UserManualsController.ControllerName, 
+                    UrlRead = new DataUrl(nameof(UserManualsController.ListProductDataAsync).NoAsync(), UserManualsController.ControllerName, 
                         new RouteValueDictionary { [nameof(UserManualProductSearchModel.UserManualId)] = Model.UserManualProductSearchModel.UserManualId }),
-                    UrlDelete = new DataUrl(nameof(UserManualsController.ProductDelete), UserManualsController.ControllerName, 
+                    UrlDelete = new DataUrl(nameof(UserManualsController.ProductDeleteAsync).NoAsync(), UserManualsController.ControllerName, 
                         new RouteValueDictionary { [nameof(UserManualProductSearchModel.UserManualId)] = Model.UserManualProductSearchModel.UserManualId }),
                     BindColumnNameActionDelete = nameof(UserManualProductModel.ProductId),
                     Length = Model.UserManualSearchModel.PageSize,
@@ -55,7 +56,7 @@
                 })
             </div>
             <div class="panel-footer">
-                <button type="submit" id="btnAddNewProduct" onclick="javascript:OpenWindow('@(Url.Action(nameof(UserManualsController.ProductAddPopup), UserManualsController.ControllerName, new { userManualId = Model.Id, btnId = "btnRefreshProducts" }))', 800, 800, true); return false;" class="btn btn-primary">
+                <button type="submit" id="btnAddNewProduct" onclick="javascript:OpenWindow('@(Url.Action(nameof(UserManualsController.ProductAddPopupAsync).NoAsync(), UserManualsController.ControllerName, new { userManualId = Model.Id, btnId = "btnRefreshProducts" }))', 800, 800, true); return false;" class="btn btn-primary">
                     @T("Admin.Promotions.Discounts.AppliedToProducts.AddNew")
                 </button>
                 <input type="submit" id="btnRefreshProducts" style="display: none" />

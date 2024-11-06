@@ -1,8 +1,9 @@
 ﻿@using Nop.Plugin.Widgets.UserManuals.Controllers;
 @using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Plugin.Widgets.UserManuals.Extensions;
 <li>
     @Html.ActionLink(T(UserManualResources.ListCaption).Text,
-    nameof(UserManualsController.Index),
+    nameof(UserManualsController.IndexAsync).NoAsync(),
     UserManualsController.ControllerName,
     null,
     null)

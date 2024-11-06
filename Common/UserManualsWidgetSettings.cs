@@ -1,9 +1,8 @@
 ﻿using Nop.Core.Configuration;
 
-namespace Nop.Plugin.Widgets.UserManuals
+namespace Nop.Plugin.Widgets.UserManuals;
+
+public class UserManualsWidgetSettings : ISettings
 {
-    public class UserManualsWidgetSettings : ISettings
-    {
-        public string WidgetZones { get; set; }
-    }
+    public string WidgetZones { get; set; }
 }

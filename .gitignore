@@ -5,3 +5,5 @@
 **/packages/
 **/*.suo
 **/*.user
+
+.editorconfig

@@ -3,6 +3,7 @@
 }
 @model CategorySearchModel
 @using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Plugin.Widgets.UserManuals.Extensions;
 @using Nop.Plugin.Widgets.UserManuals.Controllers;
 @using Nop.Plugin.Widgets.UserManuals.Models;
 @using Nop.Web.Framework.Models.DataTables;
@@ -15,7 +16,7 @@
     </h1>
     <div class="pull-right">
         @Html.ActionLink(T(AdminResources.AddCategoryCaption).Text,
-            nameof(CategoriesController.Create),
+            nameof(CategoriesController.CreateAsync).NoAsync(),
             CategoriesController.ControllerName,
             new { area = "Admin" },
             new { @class = "btn bg-blue" })
@@ -29,7 +30,7 @@
                    @await Html.PartialAsync("Table", new DataTablesModel
                    {
                        Name = "categories-grid",
-                       UrlRead = new DataUrl(nameof(CategoriesController.ListData), CategoriesController.ControllerName,
+                       UrlRead = new DataUrl(nameof(CategoriesController.ListDataAsync).NoAsync(), CategoriesController.ControllerName,
                             new Microsoft.AspNetCore.Routing.RouteValueDictionary{["area"] = "Admin" }),
                        Length = Model.PageSize,
                        LengthMenu = Model.AvailablePageSizes,
@@ -58,7 +59,7 @@
                                 Width = "100",
                                 ClassName =  NopColumnClassDefaults.Button,
                                 Render = new RenderButtonEdit(
-                                    new DataUrl(@Url.Action(nameof(CategoriesController.Edit), 
+                                    new DataUrl(@Url.Action(nameof(CategoriesController.EditAsync).NoAsync(), 
                                                             CategoriesController.ControllerName,
                                                             new { area = "Admin"})))
                             }

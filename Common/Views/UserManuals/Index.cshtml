@@ -3,6 +3,7 @@
 }
 @model List<ManufacturerManualsModel>
 @using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Plugin.Widgets.UserManuals.Extensions;
 @using Nop.Plugin.Widgets.UserManuals.Resources;
 @using Nop.Plugin.Widgets.UserManuals.Controllers;
 
@@ -68,7 +69,7 @@
                                 <td data-label="@T(UserManualResources.UserManual)">
                                     @if (manual.DocumentId > 0)
                                     {
-                                        var url = Url.Action(nameof(UserManualsController.UserManualDownload), new { id = manual.DocumentId });
+                                        var url = Url.Action(nameof(UserManualsController.UserManualDownloadAsync).NoAsync(), new { id = manual.DocumentId });
 
                                         <a href="@url" target="_blank" class="action" title="@T(UserManualResources.DownloadText)">@T(UserManualsActionResources.Download)</a>
                                     }

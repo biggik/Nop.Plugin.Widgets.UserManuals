@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
+﻿namespace Nop.Plugin.Widgets.UserManuals.Models;
 
-namespace Nop.Plugin.Widgets.UserManuals.Models
+public partial record ManufacturerManualsModel
 {
-    public partial record ManufacturerManualsModel
+    public ManufacturerManualsModel(string name)
     {
-        public ManufacturerManualsModel(string name)
-        {
-            Name = name;
-        }
-
-        public string Name { get; }
-        public List<CategoryUserManualModel> Categories { get; set; } = new List<CategoryUserManualModel>();
+        Name = name;
     }
+
+    public string Name { get; }
+    public List<CategoryUserManualModel> Categories { get; set; } = [];
 }

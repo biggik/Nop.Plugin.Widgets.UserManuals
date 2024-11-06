@@ -19,12 +19,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nop.Web", "n:\nopCommerce 4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{3437B381-1726-4F1D-A4F3-59BCDDFD403D}"
 	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
 		BuildHelper\BK-Lap-widgets-usermanuals-debug.bat = BuildHelper\BK-Lap-widgets-usermanuals-debug.bat
 		BuildHelper\BK-Lap-widgets-usermanuals-release.bat = BuildHelper\BK-Lap-widgets-usermanuals-release.bat
+		BuildHelper\BK-Slim-widgets-usermanuals-debug.bat = BuildHelper\BK-Slim-widgets-usermanuals-debug.bat
+		BuildHelper\BK-Slim-widgets-usermanuals-release.bat = BuildHelper\BK-Slim-widgets-usermanuals-release.bat
 		..\build-all.cmd = ..\build-all.cmd
 		..\build-version.cmd = ..\build-version.cmd
 		BuildHelper\BuildHelper.bat = BuildHelper\BuildHelper.bat
 		..\Common\Common.Build.props = ..\Common\Common.Build.props
+		Directory.Build.props = Directory.Build.props
 		..\LICENSE = ..\LICENSE
 		..\README.md = ..\README.md
 		..\skip-folders-in-build.txt = ..\skip-folders-in-build.txt

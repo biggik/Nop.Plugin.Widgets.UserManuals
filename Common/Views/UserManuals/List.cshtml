@@ -3,6 +3,7 @@
 }
 @model UserManualSearchModel
 @using Nop.Plugin.Widgets.UserManuals.Resources;
+@using Nop.Plugin.Widgets.UserManuals.Extensions;
 @using Nop.Plugin.Widgets.UserManuals.Controllers;
 @using Nop.Plugin.Widgets.UserManuals.Models;
 @using Nop.Web.Framework.Models.DataTables;
@@ -15,7 +16,7 @@
     </h1>
     <div class="pull-right">
         @Html.ActionLink(T(AdminResources.AddUserManualButton).Text,
-            nameof(UserManualsController.Create),
+            nameof(UserManualsController.CreateAsync).NoAsync(),
             UserManualsController.ControllerName,
             new { area = "Admin" },
             new { @class = "btn bg-blue" })
@@ -30,7 +31,7 @@
                    @await Html.PartialAsync("Table", new DataTablesModel
                    {
                        Name = "usermanual-grid",
-                       UrlRead = new DataUrl(nameof(UserManualsController.ListData), UserManualsController.ControllerName,
+                       UrlRead = new DataUrl(nameof(UserManualsController.ListDataAsync).NoAsync(), UserManualsController.ControllerName,
                             new Microsoft.AspNetCore.Routing.RouteValueDictionary{["area"] = "Admin" }),
                        Length = Model.PageSize,
                        LengthMenu = Model.AvailablePageSizes,
@@ -69,7 +70,7 @@
                                 Width = "100",
                                 ClassName = NopColumnClassDefaults.Button,
                                 Render = new RenderButtonEdit(
-                                    new DataUrl(@Url.Action(nameof(UserManualsController.Edit), 
+                                    new DataUrl(@Url.Action(nameof(UserManualsController.EditAsync).NoAsync(), 
                                                             UserManualsController.ControllerName,
                                                             new { area = "Admin"})))
                             }

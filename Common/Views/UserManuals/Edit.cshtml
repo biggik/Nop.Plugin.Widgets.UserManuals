@@ -3,6 +3,7 @@
 }
 @model UserManualModel
 @using Nop.Plugin.Widgets.UserManuals.Models;
+@using Nop.Plugin.Widgets.UserManuals.Extensions;
 @using Nop.Plugin.Widgets.UserManuals.Resources;
 @using Nop.Plugin.Widgets.UserManuals.Controllers;
 @{
@@ -16,7 +17,7 @@
             <small>
                 <i class="fa fa-arrow-circle-left"></i>
                 @Html.ActionLink(T(UserManualsActionResources.BackToList).Text,
-                    nameof(UserManualsController.List),
+                    nameof(UserManualsController.ListAsync).NoAsync(),
                     UserManualsController.ControllerName,
                     new { area = "Admin" },
                     null)

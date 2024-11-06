@@ -1,181 +1,192 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Routing;
+using Nop.Core;
+using Nop.Core.Domain.Localization;
+using Nop.Plugin.Widgets.UserManuals.Components;
+using Nop.Plugin.Widgets.UserManuals.Controllers;
+using Nop.Plugin.Widgets.UserManuals.Extensions;
+using Nop.Plugin.Widgets.UserManuals.Resources;
+using Nop.Plugin.Widgets.UserManuals.Security;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
-using Nop.Plugin.Widgets.UserManuals.Data;
-using Nop.Plugin.Widgets.UserManuals.Services;
-using Nop.Core.Infrastructure;
-using Nop.Core.Domain.Localization;
-using Nop.Core;
 using Nop.Services.Plugins;
-using Nop.Plugin.Widgets.UserManuals.Resources;
-using Nop.Web.Framework.Menu;
-using System;
-using Microsoft.AspNetCore.Routing;
 using Nop.Services.Security;
-using Nop.Plugin.Widgets.UserManuals.Controllers;
+using Nop.Web.Framework.Menu;
 using nopLocalizationHelper;
-using System.Threading.Tasks;
-using Nop.Plugin.Widgets.UserManuals.Components;
 
-namespace Nop.Plugin.Widgets.UserManuals
+namespace Nop.Plugin.Widgets.UserManuals;
+
+public class UserManualPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
 {
-    public class UserManualPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
+    private readonly ISettingService _settingService;
+    private readonly IWebHelper _webHelper;
+    private readonly ILocalizationService _localizationService;
+    private readonly ILanguageService _languageService;
+    private readonly IPermissionService _permissionService;
+    private readonly IStoreContext _storeContext;
+
+    public bool HideInWidgetList => false;
+
+    public UserManualPlugin(
+        IWebHelper webHelper,
+        ILocalizationService localizationService,
+        ILanguageService languageService,
+        IPermissionService permissionService,
+        IStoreContext storeContext,
+        ISettingService settingService)
     {
-        private readonly ISettingService _settingService;
-        private readonly IWebHelper _webHelper;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILanguageService _languageService;
-        private readonly IPermissionService _permissionService;
+        _webHelper = webHelper;
+        _localizationService = localizationService;
+        _languageService = languageService;
+        _permissionService = permissionService;
+        _storeContext = storeContext;
+        _settingService = settingService;
+    }
 
-        public bool HideInWidgetList => false;
-
-        public UserManualPlugin(
-            IWebHelper webHelper,
-            ILocalizationService localizationService,
-            ILanguageService languageService,
-            IPermissionService permissionService,
-            IStoreContext storeContext,
-            ISettingService settingService)
-        {
-            _webHelper = webHelper;
-            _localizationService = localizationService;
-            _languageService = languageService;
-            _permissionService = permissionService;
-            _settingService = settingService;
 #if DEBUG
-            DebugInitialize();
+    private static bool _debugInitialized = false;
+
+    private async Task DebugInitializeAsync()
+    {
+        if (_debugInitialized)
+        {
+            return;
+        }
+
+        _debugInitialized = true;
+
+        var resourceHelper = await CreateResourceHelperAsync();
+        await resourceHelper.CreateLocaleStringsAsync();
+        await _permissionService.InstallPermissionsAsync(new UserManualPermissionProvider());
+    }
 #endif
 
-            // TODO remove .Result below
-            var storeScope = storeContext.GetActiveStoreScopeConfigurationAsync().Result;
-            var settings = _settingService.LoadSettingAsync<UserManualsWidgetSettings>(storeScope).Result;
+    private async Task<LocaleStringHelper<LocaleStringResource>> CreateResourceHelperAsync()
+    {
+        return new LocaleStringHelper<LocaleStringResource>
+        (
+            pluginAssembly: GetType().Assembly,
+            languageCultures: from lang in await _languageService.GetAllLanguagesAsync() select (lang.Id, lang.LanguageCulture),
+            getResource: (resourceName, languageId) => _localizationService.GetLocaleStringResourceByNameAsync(resourceName, languageId, false),
+            createResource: (languageId, resourceName, resourceValue) => new LocaleStringResource { LanguageId = languageId, ResourceName = resourceName, ResourceValue = resourceValue },
+            insertResource: _localizationService.InsertLocaleStringResourceAsync,
+            updateResource: (lsr, resourceValue) => { lsr.ResourceValue = resourceValue; return _localizationService.UpdateLocaleStringResourceAsync(lsr); },
+            deleteResource: _localizationService.DeleteLocaleStringResourceAsync,
+            areResourcesEqual: (lsr, resourceValue) => lsr.ResourceValue == resourceValue
+        );
+    }
+
+    /// <summary>
+    /// Gets widget zones where this widget should be rendered
+    /// </summary>
+    /// <returns>Widget zones</returns>
+    public async Task<IList<string>> GetWidgetZonesAsync()
+    {
+#if DEBUG
+        await DebugInitializeAsync();
+#endif
+        if (_widgetZones == null)
+        {
+            int storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+            var settings = await _settingService.LoadSettingAsync<UserManualsWidgetSettings>(storeScope);
 
             _widgetZones = string.IsNullOrWhiteSpace(settings.WidgetZones)
-                ? new List<string>()
-                : settings.WidgetZones.Split(';').ToList();
+                ? []
+                : await settings.WidgetZones.Split(';').ToListAsync();
         }
 
-#if DEBUG
-        private static bool _debugInitialized = false;
+        return _widgetZones;
+    }
 
-        private void DebugInitialize()
+    private List<string> _widgetZones;
+
+    /// <summary>
+    /// Gets a configuration page URL
+    /// </summary>
+    public override string GetConfigurationPageUrl()
+    {
+        return $"{_webHelper.GetStoreLocation()}Admin/{UserManualsController.ControllerName}/Configure";
+    }
+
+    /// <summary>
+    /// Install plugin
+    /// </summary>
+    public override async Task InstallAsync()
+    {
+        await _settingService.SaveSettingAsync(new UserManualsWidgetSettings
         {
-            if (_debugInitialized)
-                return;
+            WidgetZones = "header_menu_after;productdetails_overview_bottom"
+        });
 
-            _debugInitialized = true;
+        var resourceHelper = await CreateResourceHelperAsync();
+        await resourceHelper.CreateLocaleStringsAsync();
+        await _permissionService.InstallPermissionsAsync(new UserManualPermissionProvider());
 
-            ResourceHelper().CreateLocaleStringsAsync();
-            _permissionService.InstallPermissionsAsync(new UserManualPermissionProvider());
-        }
-#endif
+        await base.InstallAsync();
+    }
 
-        private LocaleStringHelper<LocaleStringResource> ResourceHelper()
+    /// <summary>
+    /// Uninstall plugin
+    /// </summary>
+    public override async Task UninstallAsync()
+    {
+        //settings
+        await _settingService.DeleteSettingAsync<UserManualsWidgetSettings>();
+
+        var resourceHelper = await CreateResourceHelperAsync();
+        await resourceHelper.DeleteLocaleStringsAsync();
+
+        await _permissionService.UninstallPermissionsAsync(new UserManualPermissionProvider());
+
+        await base.UninstallAsync();
+    }
+
+    public Type GetWidgetViewComponent(string widgetZone)
+    {
+        return widgetZone.StartsWith("productdetails", StringComparison.CurrentCultureIgnoreCase)
+            ? typeof(WidgetsProductUserManualsViewComponent)
+            : typeof(WidgetsUserManualsViewComponent);
+    }
+
+    public async Task ManageSiteMapAsync(SiteMapNode rootNode)
+    {
+        var contentMenu = rootNode.ChildNodes.FirstOrDefault(x => x.SystemName == "Content Management");
+        if (contentMenu == null)
         {
-            return new LocaleStringHelper<LocaleStringResource>
-            (
-                pluginAssembly: GetType().Assembly,
-                languageCultures: from lang in _languageService.GetAllLanguagesAsync().Result select (lang.Id, lang.LanguageCulture),
-                getResource: (resourceName, languageId) => _localizationService.GetLocaleStringResourceByNameAsync(resourceName, languageId, false),
-                createResource: (languageId, resourceName, resourceValue) => new LocaleStringResource { LanguageId = languageId, ResourceName = resourceName, ResourceValue = resourceValue },
-                insertResource: (lsr) => _localizationService.InsertLocaleStringResourceAsync(lsr),
-                updateResource: (lsr, resourceValue) => { lsr.ResourceValue = resourceValue; return _localizationService.UpdateLocaleStringResourceAsync(lsr); },
-                deleteResource: (lsr) => _localizationService.DeleteLocaleStringResourceAsync(lsr),
-                areResourcesEqual: (lsr, resourceValue) => lsr.ResourceValue == resourceValue
-            );
-        }
-
-        /// <summary>
-        /// Gets widget zones where this widget should be rendered
-        /// </summary>
-        /// <returns>Widget zones</returns>
-        public Task<IList<string>> GetWidgetZonesAsync() => Task.FromResult<IList<string>>(_widgetZones);
-        List<string> _widgetZones;
-
-        /// <summary>
-        /// Gets a configuration page URL
-        /// </summary>
-        public override string GetConfigurationPageUrl() => $"{_webHelper.GetStoreLocation()}Admin/{UserManualsController.ControllerName}/{nameof(UserManualsController.Configure)}";
-
-        /// <summary>
-        /// Install plugin
-        /// </summary>
-        public async override Task InstallAsync()
-        {
-            await _settingService.SaveSettingAsync(new UserManualsWidgetSettings
+            // Unable to find the "Configure" menu, create our own menu container
+            contentMenu = new SiteMapNode
             {
-                WidgetZones = "header_menu_after;productdetails_overview_bottom"
-            });
-
-            await ResourceHelper().CreateLocaleStringsAsync();
-            await _permissionService.InstallPermissionsAsync(new UserManualPermissionProvider());
-
-            await base.InstallAsync();
+                SystemName = "User Manuals",
+                Title = UserManualResources.ListCaption,
+                Visible = true,
+                IconClass = "fa-cubes"
+            };
+            rootNode.ChildNodes.Add(contentMenu);
         }
 
-        /// <summary>
-        /// Uninstall plugin
-        /// </summary>
-        public override async Task UninstallAsync()
+        async Task<string> TAsync(string format)
         {
-            //settings
-            await _settingService.DeleteSettingAsync<UserManualsWidgetSettings>();
-
-
-            await ResourceHelper().DeleteLocaleStringsAsync();
-
-            // TODO in 4.4
-            // _permissionService.UninstallPermissions(new UserManualPermissionProvider());
-
-            await base.UninstallAsync();
+            return await _localizationService.GetResourceAsync(format) ?? format;
         }
 
-        public Type GetWidgetViewComponent(string widgetZone)
+        foreach ((string caption, string controller, string action) in new List<(string caption, string controller, string action)>
         {
-            return widgetZone.ToLower().StartsWith("productdetails")
-                ? typeof(WidgetsProductUserManualsViewComponent)
-                : typeof(WidgetsUserManualsViewComponent);
-        }
-
-        public async Task ManageSiteMapAsync(SiteMapNode rootNode)
+            (await TAsync(UserManualResources.ListCaption), UserManualsController.ControllerName, nameof(UserManualsController.ListAsync).NoAsync()),
+            (await TAsync(AdminResources.CategoryListCaption), CategoriesController.ControllerName, nameof(CategoriesController.ListAsync).NoAsync()),
+        })
         {
-            var contentMenu = rootNode.ChildNodes.FirstOrDefault(x => x.SystemName == "Content Management");
-            if (contentMenu == null)
+            contentMenu.ChildNodes.Add(new SiteMapNode
             {
-                // Unable to find the "Configure" menu, create our own menu container
-                contentMenu = new SiteMapNode()
-                {
-                    SystemName = "User Manuals",
-                    Title = UserManualResources.ListCaption,
-                    Visible = true,
-                    IconClass = "fa-cubes"
-                };
-                rootNode.ChildNodes.Add(contentMenu);
-            }
-
-            async Task<string> T(string format) => await _localizationService.GetResourceAsync(format) ?? format;
-
-            foreach (var item in new List<(string caption, string controller, string action)>
-            {
-                (await T(UserManualResources.ListCaption), UserManualsController.ControllerName, nameof(UserManualsController.List)),
-                (await T(AdminResources.CategoryListCaption), CategoriesController.ControllerName, nameof(CategoriesController.List)),
-            })
-            {
-                contentMenu.ChildNodes.Add(new SiteMapNode
-                {
-                    SystemName = $"{item.controller}.{item.action}",
-                    Title = item.caption,
-                    ControllerName = item.controller,
-                    ActionName = item.action,
-                    Visible = true,
-                    IconClass = "fa-dot-circle-o",
-                    RouteValues = new RouteValueDictionary {
-                    { "area", "Admin" }
+                SystemName = $"{controller}.{action}",
+                Title = caption,
+                ControllerName = controller,
+                ActionName = action,
+                Visible = true,
+                IconClass = "fa-dot-circle-o",
+                RouteValues = new RouteValueDictionary {
+                    ["area"] = "Admin"
                 },
-                });
-            }
+            });
         }
     }
 }

@@ -19,12 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nop.Web", "n:\nopCommerce 4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{3437B381-1726-4F1D-A4F3-59BCDDFD403D}"
 	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
 		BuildHelper\BK-Lap-widgets-usermanuals-debug.bat = BuildHelper\BK-Lap-widgets-usermanuals-debug.bat
 		BuildHelper\BK-Lap-widgets-usermanuals-release.bat = BuildHelper\BK-Lap-widgets-usermanuals-release.bat
 		..\build-all.cmd = ..\build-all.cmd
 		..\build-version.cmd = ..\build-version.cmd
 		BuildHelper\BuildHelper.bat = BuildHelper\BuildHelper.bat
 		..\Common\Common.Build.props = ..\Common\Common.Build.props
+		Directory.Build.props = Directory.Build.props
 		..\LICENSE = ..\LICENSE
 		..\README.md = ..\README.md
 		..\skip-folders-in-build.txt = ..\skip-folders-in-build.txt
@@ -62,7 +64,7 @@ Global
 		{AB55C4C4-C662-4008-8A5A-8974588BED35} = {5C73F01E-0888-4CFD-840E-65757E623050}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		LessCompiler = 83fc2d39-1955-4779-9887-5b0461224c79
 		SolutionGuid = {EC22C118-6015-4F38-9598-325DC8B6E2C6}
+		LessCompiler = 83fc2d39-1955-4779-9887-5b0461224c79
 	EndGlobalSection
 EndGlobal

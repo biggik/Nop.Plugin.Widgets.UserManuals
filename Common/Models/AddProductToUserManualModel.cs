@@ -1,23 +1,14 @@
 ﻿using Nop.Web.Framework.Models;
-using System.Collections.Generic;
 
-namespace Nop.Plugin.Widgets.UserManuals.Models
+namespace Nop.Plugin.Widgets.UserManuals.Models;
+
+public partial record AddProductToUserManualModel : BaseNopModel
 {
-    public partial record AddProductToUserManualModel : BaseNopModel
+    public AddProductToUserManualModel()
     {
-        #region Ctor
-
-        public AddProductToUserManualModel()
-        {
-        }
-        #endregion
-
-        #region Properties
-
-        public int UserManualId { get; set; }
-
-        public IList<int> SelectedProductIds { get; set; } = new List<int>();
-
-        #endregion
     }
+
+    public int UserManualId { get; set; }
+
+    public IList<int> SelectedProductIds { get; set; } = [];
 }

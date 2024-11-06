@@ -1,5 +1,6 @@
 ﻿@model AddProductToUserManualSearchModel
 @using Nop.Plugin.Widgets.UserManuals.Controllers;
+@using Nop.Plugin.Widgets.UserManuals.Extensions;
 @using Nop.Plugin.Widgets.UserManuals.Models;
 @using Nop.Plugin.Widgets.UserManuals.Domain;
 @using Nop.Plugin.Widgets.UserManuals.Resources;
@@ -25,7 +26,7 @@
 }
 else
 {
-    <form asp-controller="@UserManualsController.ControllerName" asp-action="@nameof(UserManualsController.ProductAddPopup)"
+    <form asp-controller="@UserManualsController.ControllerName" asp-action="@nameof(UserManualsController.ProductAddPopupAsync).NoAsync()"
           asp-route-userManualId="@Context.Request.Query["userManualId"]"
           asp-route-btnId="@Context.Request.Query["btnId"]"
           asp-route-formId="@Context.Request.Query["formId"]">
@@ -113,7 +114,7 @@ else
                             @await Html.PartialAsync("Table", new DataTablesModel
                             {
                                 Name = "products-grid",
-                                UrlRead = new DataUrl(nameof(UserManualsController.ProductAddPopupList), UserManualsController.ControllerName, null),
+                                UrlRead = new DataUrl(nameof(UserManualsController.ProductAddPopupListAsync).NoAsync(), UserManualsController.ControllerName, null),
                                 SearchButtonId = "search-products",
                                 Length = Model.PageSize,
                                 LengthMenu = Model.AvailablePageSizes,

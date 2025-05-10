@@ -317,70 +317,49 @@ namespace Nop.Plugin.Widgets.UserManuals.Services
 
         public async virtual Task InsertUserManualAsync(UserManual userManual)
         {
-            if (userManual == null)
-            {
-                throw new ArgumentNullException(nameof(userManual));
-            }
+            ArgumentNullException.ThrowIfNull(userManual);
 
             await _userManualRepository.InsertAsync(userManual);
-
             await _cacheManager.RemoveByPrefixAsync(_prefix);
         }
 
         public async virtual Task InsertCategoryAsync(UserManualCategory category)
         {
-            if (category == null)
-            {
-                throw new ArgumentNullException(nameof(category));
-            }
+            ArgumentNullException.ThrowIfNull(category);
+            
             await _categoryRepository.InsertAsync(category);
-
             await _cacheManager.RemoveByPrefixAsync(_prefix);
         }
 
         public async virtual Task UpdateUserManualAsync(UserManual userManual)
         {
-            if (userManual == null)
-            {
-                throw new ArgumentNullException(nameof(userManual));
-            }
+            ArgumentNullException.ThrowIfNull(userManual);
 
             await _userManualRepository.UpdateAsync(userManual);
-
             await _cacheManager.RemoveByPrefixAsync(_prefix);
         }
 
         public async virtual Task UpdateCategoryAsync(UserManualCategory category)
         {
-            if (category == null)
-            {
-                throw new ArgumentNullException(nameof(category));
-            }
+            ArgumentNullException.ThrowIfNull(category);
 
             await _categoryRepository.UpdateAsync(category);
-
             await _cacheManager.RemoveByPrefixAsync(_prefix);
         }
 
         public async virtual Task DeleteUserManualAsync(UserManual userManual)
         {
-            if (userManual == null)
-            {
-                throw new ArgumentNullException(nameof(userManual));
-            }
-            await _userManualRepository.DeleteAsync(userManual);
+            ArgumentNullException.ThrowIfNull(userManual);
 
+            await _userManualRepository.DeleteAsync(userManual);
             await _cacheManager.RemoveByPrefixAsync(_prefix);
         }
 
         public async virtual Task DeleteCategoryAsync(UserManualCategory category)
         {
-            if (category == null)
-            {
-                throw new ArgumentNullException(nameof(category));
-            }
-            await _categoryRepository.DeleteAsync(category);
+            ArgumentNullException.ThrowIfNull(category);
 
+            await _categoryRepository.DeleteAsync(category);
             await _cacheManager.RemoveByPrefixAsync(_prefix);
         }
 

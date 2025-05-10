@@ -12,8 +12,6 @@ namespace Nop.Plugin.Widgets.UserManuals.Models
 
         public UserManualSearchModel()
         {
-            AvailableManufacturers = new List<SelectListItem>();
-            AvailableCategories = new List<SelectListItem>();
         }
 
         #endregion
@@ -29,10 +27,9 @@ namespace Nop.Plugin.Widgets.UserManuals.Models
         [NopResourceDisplayName(UserManualResources.Category)]
         public int SearchCategoryId { get; set; }
 
-        public IList<SelectListItem> AvailableManufacturers { get; set; }
+        public IList<SelectListItem> AvailableManufacturers { get; set; } = [];
 
-        public IList<SelectListItem> AvailableCategories { get; set; }
+        public IList<SelectListItem> AvailableCategories { get; set; } = [];
         #endregion
-
     }
 }

@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Nop.Web.Framework.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Web.Framework.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Plugin.Widgets.UserManuals.Resources;
+using Nop.Web.Framework.Models;
+using Nop.Web.Framework.Mvc.ModelBinding;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
@@ -46,8 +45,8 @@ namespace Nop.Plugin.Widgets.UserManuals.Models
 
         public bool IsDiscontinuedProduct => string.IsNullOrEmpty(ProductSlug);
 
-        public IList<SelectListItem> AvailableCategories { get; set; } = new List<SelectListItem>();
-        public IList<SelectListItem> AvailableManufacturers { get; set; } = new List<SelectListItem>();
+        public IList<SelectListItem> AvailableCategories { get; set; } = [];
+        public IList<SelectListItem> AvailableManufacturers { get; set; } = [];
 
         public UserManualSearchModel UserManualSearchModel { get; } = new UserManualSearchModel();
         public UserManualProductSearchModel UserManualProductSearchModel { get; } = new UserManualProductSearchModel();

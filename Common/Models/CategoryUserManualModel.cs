@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Nop.Plugin.Widgets.UserManuals.Models
 {
@@ -12,7 +11,7 @@ namespace Nop.Plugin.Widgets.UserManuals.Models
 
         public CategoryModel Category { get; }
      
-        public List<UserManualModel> UserManualsForActiveProducts { get; } = new List<UserManualModel>();
-        public List<UserManualModel> UserManualsForDiscontinuedProducts { get; } = new List<UserManualModel>();
+        public List<UserManualModel> UserManualsForActiveProducts { get; } = [];
+        public List<UserManualModel> UserManualsForDiscontinuedProducts { get; } = [];
     }
 }

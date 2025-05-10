@@ -10,6 +10,6 @@ namespace Nop.Plugin.Widgets.UserManuals.Models
         }
 
         public string Name { get; }
-        public List<CategoryUserManualModel> Categories { get; set; } = new List<CategoryUserManualModel>();
+        public List<CategoryUserManualModel> Categories { get; set; } = [];
     }
 }

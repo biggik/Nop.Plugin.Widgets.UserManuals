@@ -4,6 +4,9 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<MvcBuildViews>true</MvcBuildViews>
 	</PropertyGroup>
+	<PropertyGroup>
+		<SolutionDir>$(MSBuildProjectDirectory)\..\</SolutionDir>
+	</PropertyGroup>
 
 	<Import Project="$(MSBuildThisFileDirectory)../../Common/Common.Build.props" />
 
@@ -251,6 +254,10 @@
 		<None Update="Views\Shared\_Shared.cshtml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Update="Status.CodeFormatting" Version="1.0.5" />
 	</ItemGroup>
 
 	<!-- This target execute after "Build" target -->

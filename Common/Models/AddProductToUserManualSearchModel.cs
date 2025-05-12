@@ -9,7 +9,7 @@ public partial record AddProductToUserManualSearchModel : BaseSearchModel
     public AddProductToUserManualSearchModel()
     {
     }
-    
+
     [NopResourceDisplayName("Admin.Catalog.Products.List.SearchProductName")]
     public string SearchProductName { get; set; }
 

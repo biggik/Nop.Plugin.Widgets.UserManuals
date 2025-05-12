@@ -144,12 +144,12 @@ public partial class UserManualsController
 
         var list = await (from c in categories
                 .Where(cat => cat.Id == (selectedCategoryId ?? -1) || cat.Published)
-                                           select new SelectListItem
-                                           {
-                                               Text = c.Name,
-                                               Value = c.Id.ToString(),
-                                               Selected = c.Id == (selectedCategoryId ?? -1)
-                                           })
+                          select new SelectListItem
+                          {
+                              Text = c.Name,
+                              Value = c.Id.ToString(),
+                              Selected = c.Id == (selectedCategoryId ?? -1)
+                          })
                 .ToListAsync();
         list.Insert(0, new SelectListItem
         {
@@ -164,12 +164,12 @@ public partial class UserManualsController
         var manufacturers = await _manufacturerService.GetAllManufacturersAsync(showHidden: false);
         var list = await (from m in manufacturers
                 .Where(man => man.Id == selectedManufacturerId || man.Published)
-                                           select new SelectListItem
-                                           {
-                                               Text = m.Name,
-                                               Value = m.Id.ToString(),
-                                               Selected = m.Id == selectedManufacturerId
-                                           })
+                          select new SelectListItem
+                          {
+                              Text = m.Name,
+                              Value = m.Id.ToString(),
+                              Selected = m.Id == selectedManufacturerId
+                          })
                 .ToListAsync();
         list.Insert(0, new SelectListItem
         {
@@ -202,7 +202,12 @@ public partial class UserManualsController
     [HttpPost]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -239,7 +244,12 @@ public partial class UserManualsController
     public async Task<IActionResult> CreateAsync
         (UserManualModel model, bool continueEditing)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -289,7 +299,12 @@ public partial class UserManualsController
     public async Task<IActionResult> EditAsync
         (UserManualModel model, bool continueEditing)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -355,7 +370,12 @@ public partial class UserManualsController
     [HttpPost]
     public async Task<IActionResult> ListProductDataAsync(UserManualProductSearchModel searchModel)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -412,7 +432,12 @@ public partial class UserManualsController
     [Area(Areas.Admin)]
     public virtual async Task<IActionResult> ProductAddPopupAsync(int userManualId)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -435,7 +460,7 @@ public partial class UserManualsController
             UserManualPermissionConfigs.MANAGE_USER_MANUALS))
 #endif
         {
-            return await AccessDeniedDataTablesJson();
+            return await base.AccessDeniedJsonAsync();
         }
         //prepare model
         var model = await _userManualModelFactory.PrepareAddProductToUserManualListModelAsync(searchModel);
@@ -449,7 +474,12 @@ public partial class UserManualsController
     [FormValueRequired("save")]
     public virtual async Task<IActionResult> ProductAddPopupAsync(AddProductToUserManualModel model)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }

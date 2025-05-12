@@ -66,8 +66,8 @@ public partial class UserManualService : IUserManualService
 
     #region Methods
     public virtual async Task<IPagedList<UserManual>> GetOrderedUserManualsAsync(
-        bool showUnpublished, 
-        int pageIndex = 0, 
+        bool showUnpublished,
+        int pageIndex = 0,
         int pageSize = int.MaxValue)
     {
         CacheKey key = CreateKey(UserManualsAllKey, showUnpublished, pageIndex, pageSize);
@@ -153,8 +153,8 @@ public partial class UserManualService : IUserManualService
                               )
                               .ToDictionary(x => x.ProductId, x => x);
         var manualProductDict = (from manualProduct in manualProducts
-                                 let pinfo = productInfoDict.TryGetValue(manualProduct.ProductId, out var value) 
-                                    ? value 
+                                 let pinfo = productInfoDict.TryGetValue(manualProduct.ProductId, out var value)
+                                    ? value
                                     : null
                                  select new
                                  {
@@ -201,11 +201,11 @@ public partial class UserManualService : IUserManualService
                           let manufacturer = manufacturerDict.TryGetValue(data.userManual.ManufacturerId, out var mv) ? mv : null
                           let mOrder = manufacturer?.DisplayOrder ?? int.MaxValue
                           let mName = manufacturer?.Name ?? ""
-                          
+
                           let category = categoryDict.TryGetValue(data.userManual.CategoryId, out var cv) ? cv : null
                           let cOrder = category?.DisplayOrder ?? int.MaxValue
                           let cName = category?.Name ?? ""
-                          
+
                           select (mId: mOrder, mName, cId: cOrder, cName, data)
                         )
                    .OrderBy(x => x.mId)
@@ -224,7 +224,7 @@ public partial class UserManualService : IUserManualService
 
         foreach ((UserManualModel userManual, bool publishedProduct) in manualList.Select(x => x.data))
         {
-            string manufacturerName = manufacturerDict.TryGetValue(userManual.ManufacturerId, out var mv) 
+            string manufacturerName = manufacturerDict.TryGetValue(userManual.ManufacturerId, out var mv)
                                         ? mv.Name
                                         : "";
             if (manufacturerName != lastManufacturer)
@@ -235,7 +235,7 @@ public partial class UserManualService : IUserManualService
                 lastManufacturer = manufacturerName;
             }
 
-            string categoryName = categoryDict.TryGetValue(userManual.CategoryId, out var cv) 
+            string categoryName = categoryDict.TryGetValue(userManual.CategoryId, out var cv)
                                     ? cv.Name
                                     : "";
             if (categoryName != lastCategoryName || categoryModel == null)
@@ -259,8 +259,8 @@ public partial class UserManualService : IUserManualService
     }
 
     public virtual async Task<IPagedList<UserManualCategory>> GetOrderedCategoriesAsync(
-        bool showUnpublished, 
-        int pageIndex = 0, 
+        bool showUnpublished,
+        int pageIndex = 0,
         int pageSize = int.MaxValue)
     {
         var key = CreateKey(CategoriesKey, showUnpublished, pageIndex, pageSize);
@@ -285,7 +285,7 @@ public partial class UserManualService : IUserManualService
 
     public virtual async Task<IList<UserManual>> GetByProductIdAsync(int productId)
     {
-        var  key = CreateKey(ProductKey, productId);
+        var key = CreateKey(ProductKey, productId);
         return await _cacheManager.GetAsync(key, async () =>
         {
             var m = from userManualProduct in _userManualProductRepository.Table
@@ -366,9 +366,9 @@ public partial class UserManualService : IUserManualService
     }
 
     public async Task<IPagedList<(UserManualProduct userManualProduct, Product product)>> GetProductsForManualAsync(
-        int manualId, 
-        bool showUnpublished = false, 
-        int pageIndex = 0, 
+        int manualId,
+        bool showUnpublished = false,
+        int pageIndex = 0,
         int pageSize = int.MaxValue)
     {
         var key = CreateKey(UserManualProductsKey, manualId, showUnpublished, pageIndex, pageSize);

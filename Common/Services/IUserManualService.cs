@@ -15,8 +15,8 @@ public partial interface IUserManualService
     /// <param name="pageSize">The page size, optional</param>
     /// <returns></returns>
     Task<IPagedList<UserManual>> GetOrderedUserManualsAsync(
-        bool showUnpublished, 
-        int pageIndex = 0, 
+        bool showUnpublished,
+        int pageIndex = 0,
         int pageSize = int.MaxValue);
 
     /// <summary>
@@ -34,8 +34,8 @@ public partial interface IUserManualService
     /// <param name="pageSize">The page size, optional</param>
     /// <returns></returns>
     Task<IPagedList<UserManualCategory>> GetOrderedCategoriesAsync(
-        bool showUnpublished, 
-        int pageIndex = 0, 
+        bool showUnpublished,
+        int pageIndex = 0,
         int pageSize = int.MaxValue);
 
     /// <summary>
@@ -111,7 +111,7 @@ public partial interface IUserManualService
     /// <param name="pageSize">The page size, optional</param>
     /// <returns></returns>
     Task<IPagedList<(UserManualProduct userManualProduct, Product product)>> GetProductsForManualAsync(
-        int manualId, 
+        int manualId,
         bool showUnpublished = false,
         int pageIndex = 0, int pageSize = int.MaxValue);
 

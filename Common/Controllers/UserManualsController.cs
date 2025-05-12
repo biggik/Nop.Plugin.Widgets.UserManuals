@@ -63,7 +63,12 @@ public partial class UserManualsController : BasePluginController
     public async Task<IActionResult> IndexAsync()
     {
         var model = await _userManualService.GetOrderedUserManualsWithProductsAsync(showUnpublished: false).ConfigureAwait(false);
-        if (await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             DisplayEditLink(Url.Action(nameof(ListAsync).NoAsync(), ControllerName, new { area = "Admin" }));
         }

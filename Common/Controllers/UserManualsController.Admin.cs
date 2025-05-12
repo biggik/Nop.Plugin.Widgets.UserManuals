@@ -19,7 +19,12 @@ public partial class UserManualsController
     [Area(Areas.Admin)]
     public async Task<IActionResult> ConfigureAsync()
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -64,7 +69,12 @@ public partial class UserManualsController
     [FormValueRequired("save")]
     public async Task<IActionResult> ConfigureAsync(ConfigurationModel model)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -102,7 +112,12 @@ public partial class UserManualsController
     [Area(Areas.Admin)]
     public async Task<IActionResult> ListAsync()
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -205,7 +220,12 @@ public partial class UserManualsController
     [Area(Areas.Admin)]
     public async Task<IActionResult> CreateAsync()
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -243,7 +263,12 @@ public partial class UserManualsController
     [Area(Areas.Admin)]
     public async Task<IActionResult> EditAsync(int id)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -292,7 +317,12 @@ public partial class UserManualsController
     [Area(Areas.Admin)]
     public async Task<IActionResult> ListDataAsync(CategorySearchModel searchModel)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -354,7 +384,12 @@ public partial class UserManualsController
     [Area(Areas.Admin)]
     public virtual async Task<IActionResult> ProductDeleteAsync(int userManualId, int productId)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -393,7 +428,12 @@ public partial class UserManualsController
     [Area(Areas.Admin)]
     public virtual async Task<IActionResult> ProductAddPopupListAsync(AddProductToUserManualSearchModel searchModel)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return await AccessDeniedDataTablesJson();
         }

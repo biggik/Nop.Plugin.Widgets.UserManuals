@@ -50,7 +50,12 @@ public partial class CategoriesController : BasePluginController
     [Area(Areas.Admin)]
     public async Task<IActionResult> CreateAsync()
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -63,7 +68,12 @@ public partial class CategoriesController : BasePluginController
     [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
     public async Task<IActionResult> CreateAsync(CategoryModel model, bool continueEditing)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -85,7 +95,12 @@ public partial class CategoriesController : BasePluginController
     [Area(Areas.Admin)]
     public async Task<IActionResult> EditAsync(int id)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
             return AccessDeniedView();
 
         Domain.UserManualCategory category = await _userManualService.GetCategoryByIdAsync(id);
@@ -98,7 +113,12 @@ public partial class CategoriesController : BasePluginController
     [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
     public async Task<IActionResult> EditAsync(CategoryModel model, bool continueEditing)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -126,7 +146,12 @@ public partial class CategoriesController : BasePluginController
     [HttpPost]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -143,7 +168,12 @@ public partial class CategoriesController : BasePluginController
     [Area(Areas.Admin)]
     public async Task<IActionResult> ListAsync()
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }
@@ -157,7 +187,12 @@ public partial class CategoriesController : BasePluginController
     [Area(Areas.Admin)]
     public async Task<IActionResult> ListDataAsync(CategorySearchModel searchModel)
     {
-        if (!await _permissionService.AuthorizeAsync(UserManualPermissionProvider.ManageUserManuals))
+        if (!await _permissionService.AuthorizeAsync(
+#if NOP_47
+            UserManualPermissionProvider.ManageUserManuals))
+#else
+            UserManualPermissionConfigs.MANAGE_USER_MANUALS))
+#endif
         {
             return AccessDeniedView();
         }

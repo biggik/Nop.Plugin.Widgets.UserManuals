@@ -16,7 +16,10 @@ using nopLocalizationHelper;
 
 namespace Nop.Plugin.Widgets.UserManuals;
 
-public class UserManualPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
+public class UserManualPlugin : BasePlugin, IWidgetPlugin
+#if NOP_47
+, IAdminMenuPlugin
+#endif
 {
     private readonly ISettingService _settingService;
     private readonly IWebHelper _webHelper;
@@ -57,7 +60,9 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
 
         var resourceHelper = await CreateResourceHelperAsync();
         await resourceHelper.CreateLocaleStringsAsync();
+#if NOP_47
         await _permissionService.InstallPermissionsAsync(new UserManualPermissionProvider());
+#endif
     }
 #endif
 
@@ -120,7 +125,9 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
 
         var resourceHelper = await CreateResourceHelperAsync();
         await resourceHelper.CreateLocaleStringsAsync();
+#if NOP_47
         await _permissionService.InstallPermissionsAsync(new UserManualPermissionProvider());
+#endif
 
         await base.InstallAsync();
     }
@@ -136,7 +143,14 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
         var resourceHelper = await CreateResourceHelperAsync();
         await resourceHelper.DeleteLocaleStringsAsync();
 
+#if NOP_48
+        //delete permissions
+        var permissionRecord = (await _permissionService.GetAllPermissionRecordsAsync())
+            .FirstOrDefault(x => x.SystemName == UserManualPermissionConfigs.MANAGE_USER_MANUALS);
+        await _permissionService.DeletePermissionRecordAsync(permissionRecord);
+#else
         await _permissionService.UninstallPermissionsAsync(new UserManualPermissionProvider());
+#endif
 
         await base.UninstallAsync();
     }
@@ -148,6 +162,7 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
             : typeof(WidgetsUserManualsViewComponent);
     }
 
+#if NOP_47
     public async Task ManageSiteMapAsync(SiteMapNode rootNode)
     {
         var contentMenu = rootNode.ChildNodes.FirstOrDefault(x => x.SystemName == "Content Management");
@@ -189,4 +204,5 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
             });
         }
     }
+#endif
 }

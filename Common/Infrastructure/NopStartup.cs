@@ -14,7 +14,7 @@ public class NopStartup : INopStartup
     {
         services.AddScoped<IUserManualService, UserManualService>();
         services.AddScoped<IUserManualModelFactory, UserManualModelFactory>();
-#if NOP_48
+#if !NOP_47
         services.AddScoped<IConsumer<AdminMenuCreatedEvent>, AdminMenuEventHandler>();
 #endif
     }

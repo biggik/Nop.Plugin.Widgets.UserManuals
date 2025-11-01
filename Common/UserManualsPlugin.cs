@@ -88,7 +88,11 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin
     public async Task<IList<string>> GetWidgetZonesAsync()
     {
 #if DEBUG
-        await DebugInitializeAsync();
+        try
+        {
+            await DebugInitializeAsync();
+        }
+        catch { }
 #endif
         if (_widgetZones == null)
         {
@@ -143,13 +147,13 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin
         var resourceHelper = await CreateResourceHelperAsync();
         await resourceHelper.DeleteLocaleStringsAsync();
 
-#if NOP_48
+#if NOP_47
+        await _permissionService.UninstallPermissionsAsync(new UserManualPermissionProvider());
+#else
         //delete permissions
         var permissionRecord = (await _permissionService.GetAllPermissionRecordsAsync())
             .FirstOrDefault(x => x.SystemName == UserManualPermissionConfigs.MANAGE_USER_MANUALS);
         await _permissionService.DeletePermissionRecordAsync(permissionRecord);
-#else
-        await _permissionService.UninstallPermissionsAsync(new UserManualPermissionProvider());
 #endif
 
         await base.UninstallAsync();

@@ -3,7 +3,7 @@
   "FriendlyName": "UserManuals",
   "SystemName": "Widgets.UserManuals",
   "Version": "1.4.6",
-  "SupportedVersions": [ "4.80" ],
+  "SupportedVersions": [ "4.90" ],
   "Author": "Status ehf",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Widgets.UserManuals.dll",

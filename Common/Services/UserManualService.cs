@@ -20,13 +20,13 @@ public partial class UserManualService : IUserManualService
     private static readonly string _productKey = _prefix + "usermanualproduct-{0}";
     private static readonly string _categoryKey = _prefix + "usermanualcategory-{0}";
 
-    private readonly CacheKey UserManualsAllKey = new(_allKey, _prefix);
-    private readonly CacheKey UserManualsUIKey = new(_uiKey, _prefix);
-    private readonly CacheKey UserManualsCategoryKey = new(_usermanualCategoryKey, _prefix);
-    private readonly CacheKey CategoriesKey = new(_categoriesKey, _prefix);
-    private readonly CacheKey UserManualProductsKey = new(_productsKey, _prefix);
-    private readonly CacheKey ProductKey = new(_productKey, _prefix);
-    private readonly CacheKey CategoryKey = new(_categoryKey, _prefix);
+    private readonly CacheKey UserManualsAllKey = new(_allKey);
+    private readonly CacheKey UserManualsUIKey = new(_uiKey);
+    private readonly CacheKey UserManualsCategoryKey = new(_usermanualCategoryKey);
+    private readonly CacheKey CategoriesKey = new(_categoriesKey);
+    private readonly CacheKey UserManualProductsKey = new(_productsKey);
+    private readonly CacheKey ProductKey = new(_productKey);
+    private readonly CacheKey CategoryKey = new(_categoryKey);
     #endregion
 
     #region Fields

@@ -23,7 +23,7 @@ public class WidgetsProductUserManualsViewComponent : NopViewComponent
         var manuals = await _userManualService.GetByProductIdAsync(product.Id);
         return manuals != null && manuals.Any()
             ? View("~/Plugins/Widgets.UserManuals/Views/Shared/Components/WidgetProductUserManuals/Default.cshtml",
-                (from manual in manuals
+                await (from manual in manuals
                  select manual.ToModel()
                 ).ToListAsync())
             : Content("");

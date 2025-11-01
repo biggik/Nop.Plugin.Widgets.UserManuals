@@ -2,7 +2,13 @@
 set sln_file=Nop.Plugin.Widgets.UserManuals
 
 cd %1
-dotnet build %sln_file% --configuration=Debug
-dotnet build %sln_file% --configuration=Release
 
+cd "%sln_file%"
+dotnet restore
+dotnet build "%sln_file%.csproj" --configuration=Debug --no-restore
+
+echo Starting Release build...
+dotnet build "%sln_file%.csproj" --configuration=Release --no-restore
+
+cd ..
 cd ..

@@ -2,11 +2,8 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
-		<MvcBuildViews>true</MvcBuildViews>
 	</PropertyGroup>
-
-	<Import Project="$(MSBuildThisFileDirectory)../../Common/Common.Build.props" />
-
+	
 	<ItemGroup>
 		<None Remove="logo.jpg" />
 		<None Remove="plugin.json" />
@@ -191,8 +188,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="nopLocalizationHelper" Version="0.7.2" />
+		<PackageReference Include="nopLocalizationHelper" Version="0.8.1" GeneratePathProperty="true" />
 	</ItemGroup>
+
+	<Target Name="Copy reference" AfterTargets="CoreCompile">
+		<Copy
+			SourceFiles="$(PkgnopLocalizationHelper)\lib\net8.0\nopLocalizationHelper.dll"
+			DestinationFolder="$(OutDir)" />
+	</Target>
+
+	<PropertyGroup>
+		<!-- this in combination with GeneratePathProperty allows us to let the build helper copy the file for packaging -->
+		<nopLocRef Condition=" '$(nopLocRef)' == '' ">$(PkgnopLocalizationHelper)\lib\net8.0\nopLocalizationHelper.dll</nopLocRef>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<None Update="Views\UserManuals\Configure.cshtml">
@@ -260,10 +268,6 @@
 		<ItemGroup>
 			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != 'nopLocalizationHelper'" />
 		</ItemGroup>
-	</Target>
-
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="call $(ProjectDir)..\BuildHelper\BuildHelper.bat $(ConfigurationName)" />
 	</Target>
 
 </Project>

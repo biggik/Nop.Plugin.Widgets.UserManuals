@@ -460,7 +460,7 @@ public partial class UserManualsController
             UserManualPermissionConfigs.MANAGE_USER_MANUALS))
 #endif
         {
-            return await base.AccessDeniedJsonAsync();
+            return base.AccessDeniedView();
         }
         //prepare model
         var model = await _userManualModelFactory.PrepareAddProductToUserManualListModelAsync(searchModel);

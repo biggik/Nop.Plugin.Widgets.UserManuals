@@ -2,7 +2,7 @@
   "Group": "Widgets",
   "FriendlyName": "UserManuals",
   "SystemName": "Widgets.UserManuals",
-  "Version": "1.4.4",
+  "Version": "1.4.6",
   "SupportedVersions": [ "4.70" ],
   "Author": "Status ehf",
   "DisplayOrder": 1,

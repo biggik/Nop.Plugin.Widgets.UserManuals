@@ -79,6 +79,11 @@ public partial class UserManualsController : BasePluginController
     public async Task<IActionResult> UserManualDownloadAsync(int id)
     {
         var download = await _downloadService.GetDownloadByIdAsync(id);
+        if ((string.IsNullOrEmpty(download.Filename) || string.IsNullOrEmpty(download.Extension))
+            && !string.IsNullOrEmpty(download.DownloadUrl))
+        {
+            return Redirect(download.DownloadUrl);
+        }
         return File(download.DownloadBinary, download.ContentType, download.Filename + download.Extension);
     }
 }

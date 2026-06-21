@@ -81,6 +81,12 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin
         );
     }
 
+    private async Task InstallLocaleResourcesAsync()
+    {
+        var resourceHelper = await CreateResourceHelperAsync();
+        await resourceHelper.CreateLocaleStringsAsync();
+    }
+
     /// <summary>
     /// Gets widget zones where this widget should be rendered
     /// </summary>
@@ -127,13 +133,22 @@ public class UserManualPlugin : BasePlugin, IWidgetPlugin
             WidgetZones = "header_menu_after;productdetails_overview_bottom"
         });
 
-        var resourceHelper = await CreateResourceHelperAsync();
-        await resourceHelper.CreateLocaleStringsAsync();
+        await InstallLocaleResourcesAsync();
 #if NOP_47
         await _permissionService.InstallPermissionsAsync(new UserManualPermissionProvider());
 #endif
 
         await base.InstallAsync();
+    }
+
+    /// <summary>
+    /// Update plugin
+    /// </summary>
+    public override async Task UpdateAsync(string currentVersion, string targetVersion)
+    {
+        await InstallLocaleResourcesAsync();
+
+        await base.UpdateAsync(currentVersion, targetVersion);
     }
 
     /// <summary>

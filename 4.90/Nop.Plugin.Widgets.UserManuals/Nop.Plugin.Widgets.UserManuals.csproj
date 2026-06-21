@@ -194,7 +194,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="nopLocalizationHelper" Version="0.7.2" />
+		<PackageReference Include="nopLocalizationHelper" Version="0.8.3" />
 	</ItemGroup>
 
 	<ItemGroup>

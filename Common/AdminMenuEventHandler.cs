@@ -52,7 +52,7 @@ public class AdminMenuEventHandler : IConsumer<AdminMenuCreatedEvent>
                 Title = caption,
                 Url = $"/Admin/{controller}/{action}",
                 Visible = true,
-                IconClass = "fa-dot-circle-o"
+                IconClass = "far fa-dot-circle"
             });
         }
     }
